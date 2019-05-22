@@ -34,7 +34,14 @@
         </e>
       </e>
       <e p="Controllers" t="Include">
+        <e p="LoggingController.cs" t="Include" />
         <e p="SampleDataController.cs" t="Include" />
+      </e>
+      <e p="Database" t="Include">
+        <e p="DatabaseCtx.cs" t="Include" />
+        <e p="Model" t="Include">
+          <e p="Log.cs" t="Include" />
+        </e>
       </e>
       <e p="Pages" t="Include">
         <e p="Error.cshtml" t="Include" />
