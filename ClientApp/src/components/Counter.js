@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import {Button} from 'primereact/button';
+
+
 
 export class Counter extends Component {
   displayName = Counter.name
@@ -24,7 +27,9 @@ export class Counter extends Component {
 
         <p>Current count: <strong>{this.state.currentCount}</strong></p>
 
-        <button onClick={this.incrementCounter}>Increment</button>
+          <Button onClick={this.incrementCounter} label="Save" icon="pi pi-check" iconPos="right" className="p-button-success"/>
+
+        <button >Increment</button>
       </div>
     );
   }

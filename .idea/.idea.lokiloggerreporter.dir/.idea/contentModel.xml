@@ -3,25 +3,23 @@
   <component name="ContentModelStore">
     <e p="$APPLICATION_CONFIG_DIR$/consoles/db" t="IncludeRecursive" />
     <e p="$APPLICATION_CONFIG_DIR$/extensions" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.Rider2018.2/system/extResources" t="IncludeRecursive" />
-    <e p="$USER_HOME$/.Rider2018.2/system/resharper-host/local/Transient/ReSharperHost/v182/SolutionCaches/_lokiloggerreporter.-1357388949.00" t="ExcludeRecursive" />
+    <e p="$USER_HOME$/.Rider2019.1/system/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/.Rider2019.1/system/resharper-host/local/Transient/ReSharperHost/v191/SolutionCaches/_.19.00" t="ExcludeRecursive" />
     <e p="$PROJECT_DIR$" t="IncludeRecursive">
       <e p=".gitignore" t="Include" />
       <e p="ClientApp" t="Include">
         <e p=".gitignore" t="Include" />
         <e p="README.md" t="Include" />
-        <e p="node_modules" t="ExcludeRecursive">
-          <e p="bootstrap" t="IncludeRecursive" />
-          <e p="primeicons" t="IncludeRecursive" />
-          <e p="primereact" t="IncludeRecursive" />
-          <e p="react" t="IncludeRecursive" />
-          <e p="react-bootstrap" t="IncludeRecursive" />
-          <e p="react-dom" t="IncludeRecursive" />
-          <e p="react-router-bootstrap" t="IncludeRecursive" />
-          <e p="react-router-dom" t="IncludeRecursive" />
-          <e p="react-scripts" t="IncludeRecursive" />
-          <e p="rimraf" t="IncludeRecursive" />
-        </e>
+        <e p="node_modules/bootstrap" t="IncludeRecursive" />
+        <e p="node_modules/primeicons" t="IncludeRecursive" />
+        <e p="node_modules/primereact" t="IncludeRecursive" />
+        <e p="node_modules/react" t="IncludeRecursive" />
+        <e p="node_modules/react-bootstrap" t="IncludeRecursive" />
+        <e p="node_modules/react-dom" t="IncludeRecursive" />
+        <e p="node_modules/react-router-bootstrap" t="IncludeRecursive" />
+        <e p="node_modules/react-router-dom" t="IncludeRecursive" />
+        <e p="node_modules/react-scripts" t="IncludeRecursive" />
+        <e p="node_modules/rimraf" t="IncludeRecursive" />
         <e p="package-lock.json" t="Include" />
         <e p="package.json" t="Include" />
         <e p="public" t="Include">
@@ -46,6 +44,8 @@
         </e>
       </e>
       <e p="Controllers" t="Include">
+        <e p="AuthenticationController.cs" t="Include" />
+        <e p="ControllerAbstract.cs" t="Include" />
         <e p="LoggingController.cs" t="Include" />
         <e p="SampleDataController.cs" t="Include" />
       </e>
@@ -53,6 +53,7 @@
         <e p="DatabaseCtx.cs" t="Include" />
         <e p="Model" t="Include">
           <e p="Log.cs" t="Include" />
+          <e p="User.cs" t="Include" />
         </e>
       </e>
       <e p="Pages" t="Include">
@@ -64,7 +65,14 @@
       <e p="Properties" t="Include">
         <e p="launchSettings.json" t="Include" />
       </e>
+      <e p="Services" t="Include">
+        <e p="UserService.cs" t="Include" />
+      </e>
       <e p="Startup.cs" t="Include" />
+      <e p="ViewModel" t="Include">
+        <e p="OperationResult.cs" t="Include" />
+        <e p="UserModel.cs" t="Include" />
+      </e>
       <e p="appsettings.Development.json" t="Include" />
       <e p="appsettings.json" t="Include" />
       <e p="bin" t="ExcludeRecursive" />

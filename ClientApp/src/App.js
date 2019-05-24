@@ -5,8 +5,13 @@ import { Home } from './components/Home';
 import { FetchData } from './components/FetchData';
 import { Counter } from './components/Counter';
 
+import 'primereact/resources/themes/nova-light/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+
+
 export default class App extends Component {
-  displayName = App.name
+  displayName = App.name;
 
   render() {
     return (
