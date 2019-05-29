@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using lokiloggerreporter.Config;
+using lokiloggerreporter.Models;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +21,9 @@ namespace lokiloggerreporter {
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			DatabaseSettings databaseSettings = GetSettings<DatabaseSettings>("DatabaseSettings");
+			services.AddDbContext<DatabaseCtx>(opt => opt.UseInMemoryDatabase(databaseSettings.ConnectionString));
+			
 			services.Configure<CookiePolicyOptions>(options =>
 			{
 				// This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -52,5 +59,13 @@ namespace lokiloggerreporter {
 					"{controller=Home}/{action=Index}/{id?}");
 			});
 		}
+		
+		private T GetSettings<T>(string section)
+		{
+			T setting = Configuration.GetSection(section).Get<T>();
+			if (setting == null) throw new NullReferenceException(section + " is null");
+			return setting;
+		}
+
 	}
 }
