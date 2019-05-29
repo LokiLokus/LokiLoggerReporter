@@ -2,11 +2,11 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<dashboard-card color="bg-info" count="12"></dashboard-card>
-<dashboard-card color="bg-warning" count="1w2"></dashboard-card>
-<dashboard-card color="bg-danger" count="12"></dashboard-card>
-<dashboard-card color="bg-critical" count="1s2"></dashboard-card>
+<dashboard-card color="bg-info" count="12" type="Informations"></dashboard-card>
+<dashboard-card color="bg-warning" count="1w2" type="Warnings"></dashboard-card>
+<dashboard-card color="bg-danger" count="12" type="Errors"></dashboard-card>
+<dashboard-card color="bg-critical" count="1s2" type="Criticals"></dashboard-card>
 
 @section Scripts{
-    <script src="/components/dashboard-card/dashboard-card.js"></script>
+    <script src="/components/dashboard-card.js"></script>
 }

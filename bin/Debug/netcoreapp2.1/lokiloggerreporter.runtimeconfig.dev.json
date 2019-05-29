@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "/home/lokilokus/.dotnet/store/|arch|/|tfm|",
+      "/home/lokilokus/.nuget/packages"
+    ]
+  }
+}
