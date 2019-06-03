@@ -52,16 +52,7 @@
 
         <div class="container-fluid" id="app">
 
-            <!-- Breadcrumbs-->
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="#">Dashboard</a>
-                </li>
-                <li class="breadcrumb-item active">Overview</li>
-            </ol>
-            <div class="row">
                 @RenderBody()
-            </div>
         </div>
 
         <footer class="sticky-footer">
@@ -87,8 +78,9 @@
 <script src="/lib/datatables/dataTables.bootstrap4.js"></script>-->
 <script src="/lib/vue/vue.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
+
 @RenderSection("Scripts", required: false)
 <script src="/js/admin.js"></script>
-<script src="/js/adminvue.js"></script>
 </body>
 </html>

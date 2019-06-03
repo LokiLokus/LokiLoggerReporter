@@ -1,37 +1,27 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using lokiloggerreporter.Models;
 using Microsoft.AspNetCore.Mvc;
+using static System.String;
 
 namespace lokiloggerreporter.Controllers {
+	[Route("/")]
 	public class HomeController : Controller {
+		public DatabaseCtx DatabaseCtx { get; set; }
+		public HomeController(DatabaseCtx databaseCtx)
+		{
+			DatabaseCtx = databaseCtx;
+		}
 		public IActionResult Index()
 		{
 			return View();
 		}
 
-		public IActionResult About()
+		[HttpGet("Source")]
+		public IActionResult AnalyzeSource()
 		{
-			ViewData["Message"] = "Your application description page.";
-
-			return View();
-		}
-
-		public IActionResult Contact()
-		{
-			ViewData["Message"] = "Your contact page.";
-
-			return View();
-		}
-
-		public IActionResult Privacy()
-		{
-			return View();
-		}
-
-		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-		public IActionResult Error()
-		{
-			return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+			return View("AnalyzeSource");
 		}
 	}
 }

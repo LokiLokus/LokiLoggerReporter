@@ -1,0 +1,199 @@
+@{
+    ViewData["Title"] = "Logmanagment";
+}
+<div id="analyzeSource" class="row">
+    <div class="col-lg-6    ">
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fas fa-tools">
+                    Logs {{data.length}}
+                </i>
+            </div>
+            <div class="card-body">
+
+                <div class="form-inline">
+                    <div class="form-group">
+                        <input v-model="source" type="text" class="form-control mb-2 mr-sm-2" placeholder="Source">
+                    </div>
+                    <div class="form-check mb-2 mr-sm-2">
+                        <label class="form-check-label">
+                            <input v-model="allow.debug" type="checkbox"> <i class="fas fa-bug"></i>
+                        </label>
+                        <label class="form-check-label">
+                            <input v-model="allow.info" type="checkbox"> <i class="fas fa-info"></i>
+                        </label>
+                        <label class="form-check-label">
+                            <input v-model="allow.warn" type="checkbox"> <i class="fas fa-exclamation-circle"></i>
+                        </label>
+                        <label class="form-check-label">
+                            <input v-model="allow.err" type="checkbox"> <i class="fas fa-times"></i>
+                        </label>
+                        <label class="form-check-label">
+                            <input v-model="allow.crit" type="checkbox"> <i class="fas fa-skull-crossbones"></i>
+                        </label>
+                        
+                    </div>
+                    <button class="btn btn-primary" @@click="getData()">Update</button>
+
+                </div>
+
+
+                <table class="table table-sm">
+                    <thead class="thead-light">
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>Time</th>
+                        <th>Message</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="log in data" @@click="selectData(log)">
+                        <td>
+                            <i v-if="log.logTyp == 2" class="fas fa-undo"></i>
+                            <i v-if="log.logTyp == 1" class="fas fa-exclamation"></i>
+                        </td>
+                        <td>
+                            <i v-if="log.logLevel == 0 || log.logLevel == 1" class="fas fa-bug"></i>
+                            <i v-if="log.logLevel == 2" class="fas fa-info"></i>
+                            <i v-if="log.logLevel == 3" class="fas fa-exclamation-circle"></i>
+                            <i v-if="log.logLevel == 4" class="fas fa-times"></i>
+                            <i v-if="log.logLevel == 5" class="fas fa-skull-crossbones"></i>
+                        </td>
+                        <td>{{log.time | date}}</td>
+                        <td>{{log | message }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+
+            </div>
+        </div>
+    </div>
+ <div class="col-lg-5">
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fas fa-wrench">
+            </i>
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="form-group">
+                    <label>Id:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-audio-description"></i>
+                            </span>
+                        </div>
+                        <input disabled="" v-model="selData.id" type="text" class="form-control" placeholder="">
+                    </div>
+                </div>
+                
+                <div class="form-group" v-show="selData.message">
+                    <label>Message:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-audio-description"></i>
+                            </span>
+                        </div>
+                        <input disabled="" v-model="selData.message" type="text" class="form-control" placeholder="">
+                    </div>
+                </div>
+                
+                <div class="form-group"  v-show="selData.data && selData.data != '[]'">
+                    <label>Data:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-audio-description"></i>
+                            </span>
+                        </div>
+                        <input disabled="" v-model="selData.data" type="text" class="form-control" placeholder="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Zeit:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-audio-description"></i>
+                            </span>
+                        </div>
+                        <input disabled="" v-model="selData.time" type="text" class="form-control" placeholder="">
+                    </div>
+                </div>
+                
+                <div class="form-group" v-show="selData.exception">
+                    <label>Exception:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-audio-description"></i>
+                            </span>
+                        </div>
+                        <textarea style="height:100px" disabled="" v-model="selData.exception" type="text" class="form-control" placeholder=""></textarea>
+                    </div>
+                </div>
+                    
+                <div class="form-group">
+                    <label>Class:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-audio-description"></i>
+                            </span>
+                        </div>
+                        <input disabled="" v-model="selData.class" type="text" class="form-control" placeholder="">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Method:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-audio-description"></i>
+                            </span>
+                        </div>
+                        <input disabled="" v-model="selData.method" type="text" class="form-control" placeholder="">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Line:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-audio-description"></i>
+                            </span>
+                        </div>
+                        <input disabled="" v-model="selData.line" type="text" class="form-control" placeholder="">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Thread:</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <i class="fas fa-audio-description"></i>
+                            </span>
+                        </div>
+                        <input disabled="" v-model="selData.threadId" type="text" class="form-control" placeholder="">
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+</div>
+</div>
+
+@section Scripts{
+    <script src="/js/AnalyzeSource.js"></script>
+}

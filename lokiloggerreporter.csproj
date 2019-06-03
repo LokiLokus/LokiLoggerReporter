@@ -10,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Rest" />
     <Folder Include="Services" />
     <Folder Include="ViewModel" />
   </ItemGroup>
