@@ -22,7 +22,7 @@ namespace lokiloggerreporter {
 		public void ConfigureServices(IServiceCollection services)
 		{
 			DatabaseSettings databaseSettings = GetSettings<DatabaseSettings>("DatabaseSettings");
-			services.AddDbContext<DatabaseCtx>(opt => opt.UseInMemoryDatabase(databaseSettings.ConnectionString));
+			services.AddDbContext<DatabaseCtx>(opt => opt.UseMySql(databaseSettings.ConnectionString));
 			
 			services.Configure<CookiePolicyOptions>(options =>
 			{

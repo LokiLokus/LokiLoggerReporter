@@ -41,11 +41,13 @@ namespace lokiloggerreporter.Rest {
 		[HttpGet("GetLogBySource/{source}")]
 		public async Task<ActionResult> GetLogBySource([FromRoute] string source)
 		{
+			
+			return Ok(DatabaseCtx.Logs.Where(x => x.Name.ToLower().Contains(source.ToLower())).ToList());
 			HttpClient t = new HttpClient();
 			var d = await t.GetStringAsync("https://llogger.hopfenspace.org/api/Logging/GetLog");
 			var result = JsonConvert.DeserializeObject < List<Log>>(d);
-			
-			return Ok(result.Where(x => x.Name == source));
+			//string data = @;	
+			return Ok(result.Where(x => x.Name.ToLower().Contains(source.ToLower())));
 		}
 	}
 }
