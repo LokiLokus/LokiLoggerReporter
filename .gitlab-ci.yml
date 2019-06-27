@@ -20,5 +20,5 @@ runProject:
     
 stages:
   - clean
+  - build
   - run
-
