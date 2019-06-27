@@ -16,6 +16,7 @@ runProject:
     - rm appsettings.json
     - ls /
     - cp /appsettings.json appsettings.json
+    - whoami
     - dotnet run
     
 stages:
