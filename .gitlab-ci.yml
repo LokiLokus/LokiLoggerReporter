@@ -1,8 +1,8 @@
 killold:
   stage: clean
   script:
-   - pkill -f dotnet
-   - pkill -f lokilogger
+   - whoami 
+   - if pgrep dotnet; then pkill dotnet; fi
 
 runProject:
   stage: run
