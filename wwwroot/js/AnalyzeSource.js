@@ -4,7 +4,7 @@ new Vue({
             data:[],
             selData:{},
             errors:{},
-            source:"BME",
+            source:"",
             allow:{
                 debug:false,
                 info:false,
