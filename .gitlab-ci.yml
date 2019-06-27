@@ -3,6 +3,12 @@ killold:
   script:
    - if pgrep dotnet; then pkill dotnet; fi
 
+testbuild:
+  stage: build
+  script:
+    - dotnet restore
+    - dotnet build
+
 runProject:
   stage: run
   script:
