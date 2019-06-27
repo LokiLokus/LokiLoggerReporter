@@ -17,7 +17,7 @@ runProject:
     - ls /
     - cp /appsettings.json appsettings.json
     - dotnet run
-
+    
 stages:
   - clean
   - run
