@@ -8,7 +8,7 @@ runProject:
   script:
     - ls
     - rm appsettings.json
-    - mv /appsettings.json appsettings.json
+    - cp /appsettings.json appsettings.json
     - dotnet run
 
 stages:
