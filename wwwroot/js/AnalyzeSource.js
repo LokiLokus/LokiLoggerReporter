@@ -16,7 +16,7 @@ new Vue({
     },
     methods: {
         getData: function () {
-            axios.get('/api/Logging/GetLogBySource/' + this.source)
+            axios.get('/api/Logging/GetLogBySource/' + this.source + '/0-100')
                 .then(x => {
                     this.data = x.data.filter(xa =>{
                         if(((xa.logLevel === 0 || xa.logLevel === 1) && this.allow.debug)) return true;
