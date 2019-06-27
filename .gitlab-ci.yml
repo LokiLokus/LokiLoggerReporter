@@ -17,7 +17,7 @@ runProject:
     - ls /
     - cp /appsettings.json appsettings.json
     - whoami
-    - sudo dotnet bin/Release/netcoreapp2.1/lokiloggerreporter.dll
+    - dotnet bin/Release/netcoreapp2.1/lokiloggerreporter.dll
     
 stages:
   - clean
