@@ -7,7 +7,7 @@ testbuild:
   stage: build
   script:
     - dotnet restore
-    - dotnet build
+    - dotnet publish -c Release
 
 runProject:
   stage: run
@@ -17,7 +17,7 @@ runProject:
     - ls /
     - cp /appsettings.json appsettings.json
     - whoami
-    - dotnet run
+    - sudo dotnet bin/Release/netcoreapp2.1/lokiloggerreporter.dll
     
 stages:
   - clean
