@@ -1,13 +1,12 @@
 killold:
   stage: clean
   script:
-   - whoami 
    - if pgrep dotnet; then pkill dotnet; fi
 
 runProject:
   stage: run
   script:
-    - cd lokiloggerreporter
+    - ls
     - rm appsettings.json
     - mv /appsettings.json appsettings.json
     - dotnet run
