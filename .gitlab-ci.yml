@@ -1,0 +1,17 @@
+killold:
+  stage: clean
+  script:
+   - pkill -f dotnet
+   - pkill -f lokilogger
+
+runProject:
+  stage: run
+  script:
+    - cd lokiloggerreporter
+    - rm appsettings.json
+    - mv /appsettings.json appsettings.json
+    - dotnet run
+
+stages:
+  - clean
+  - run
