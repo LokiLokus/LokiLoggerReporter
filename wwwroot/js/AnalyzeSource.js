@@ -5,9 +5,10 @@ new Vue({
             selData:{},
             errors:{},
             source:"",
+            count:100,
             allow:{
-                debug:false,
-                info:false,
+                debug:true,
+                info:true,
                 warn:true,
                 err:true,
                 crit:true
@@ -16,7 +17,7 @@ new Vue({
     },
     methods: {
         getData: function () {
-            axios.get('/api/Logging/GetLogBySource/' + this.source + '/0-100')
+            axios.get('/api/Logging/GetLogBySource/' + this.source + '/0-' + this.count)
                 .then(x => {
                     this.data = x.data.filter(xa =>{
                         if(((xa.logLevel === 0 || xa.logLevel === 1) && this.allow.debug)) return true;
