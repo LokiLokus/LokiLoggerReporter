@@ -8,6 +8,7 @@ runProject:
   script:
     - ls
     - rm appsettings.json
+    - ls /
     - cp /appsettings.json appsettings.json
     - dotnet run
 
