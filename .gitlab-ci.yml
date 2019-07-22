@@ -14,7 +14,7 @@ runProject:
   stage: run
   script:
     - mkdir /lokilogger
-    - cp * /lokilogger/*
+    - cp * /lokilogger
     - cd /lokilogger
     - rm appsettings.json
     - cp /appsettings.json appsettings.json
