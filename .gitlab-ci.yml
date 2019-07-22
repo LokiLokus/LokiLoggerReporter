@@ -1,7 +1,8 @@
 killold:
   stage: clean
   script:
-   - if pgrep dotnet; then pkill dotnet; fi
+   - rm -r /lokilogger ||true
+   - systemctl stop lokilogger ||true
 
 testbuild:
   stage: build
@@ -12,11 +13,12 @@ testbuild:
 runProject:
   stage: run
   script:
-    - ls
-    - rm appsettings.json
-    - ls /
+    - mkdir /lokilogger
+    - cp -r * /lokilogger
+    - cd /lokilogger
+    - rm appsettings.json ||true
     - cp /appsettings.json appsettings.json
-    - setsid nohup dotnet run > nohup.out & disown
+    - systemctl start lokilogger 
     
 stages:
   - clean
