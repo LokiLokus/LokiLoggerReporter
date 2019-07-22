@@ -18,7 +18,7 @@ runProject:
     - cd /lokilogger
     - rm appsettings.json
     - cp /appsettings.json appsettings.json
-    - systemctl start lokilogger
+    - systemctl start lokilogger 
     
 stages:
   - clean
