@@ -1,8 +1,8 @@
 killold:
   stage: clean
   script:
-   - rm -r /lokilogger ||:
-   - systemctl stop lokilogger ||:
+   - rm -r /lokilogger ||true
+   - systemctl stop lokilogger ||true
 
 testbuild:
   stage: build
@@ -16,7 +16,7 @@ runProject:
     - mkdir /lokilogger
     - cp -r * /lokilogger
     - cd /lokilogger
-    - rm appsettings.json ||:
+    - rm appsettings.json ||true
     - cp /appsettings.json appsettings.json
     - systemctl start lokilogger 
     
