@@ -16,7 +16,7 @@ runProject:
     - rm appsettings.json
     - ls /
     - cp /appsettings.json appsettings.json
-    - setsid nohup dotnet run > nohup.out &
+    - dotnet run & disown
     
 stages:
   - clean
