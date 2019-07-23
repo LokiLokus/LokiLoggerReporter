@@ -18,6 +18,13 @@ namespace lokiloggerreporter.Controllers {
 			return View();
 		}
 
+		[HttpGet("Source/{source}")]
+		public IActionResult AnalyzeSource(string source)
+		{
+			return View("AnalyzeSource");
+		}
+		
+		
 		[HttpGet("Source")]
 		public IActionResult AnalyzeSource()
 		{

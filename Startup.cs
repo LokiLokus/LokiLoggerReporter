@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace lokiloggerreporter {
 	public class Startup {
@@ -43,7 +45,11 @@ namespace lokiloggerreporter {
 			});
 
 
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+			services.AddMvc().AddJsonOptions(options =>
+			{
+				options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+				options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 			
 		}
 

@@ -16,15 +16,31 @@ new Vue({
         }
     },
     methods: {
+        source: function(){
+            var url = window.location.pathname;
+            var urls = url.split("/");
+            var path;
+            for (var i = 0; i < urls.length; i++) {
+                if(urls[i] === "Source"){
+                    if(urls.length > i){
+                        
+                    }
+                    parh = urls
+                }
+            }
+            
+        }
+        
+        
         getData: function () {
             axios.get('/api/Logging/GetLogBySource/' + this.source + '/0-' + this.count)
                 .then(x => {
                     this.data = x.data.filter(xa =>{
-                        if(((xa.logLevel === 0 || xa.logLevel === 1) && this.allow.debug)) return true;
-                        if(xa.logLevel === 2 && this.allow.info) return true;
-                        if(xa.logLevel === 3 && this.allow.warn) return true;
-                        if(xa.logLevel === 4 && this.allow.err) return true;
-                        if(xa.logLevel === 5 && this.allow.crit) return true;
+                        if(((xa.LogLevel === 0 || xa.LogLevel === 1) && this.allow.debug)) return true;
+                        if(xa.LogLevel === 2 && this.allow.info) return true;
+                        if(xa.LogLevel === 3 && this.allow.warn) return true;
+                        if(xa.LogLevel === 4 && this.allow.err) return true;
+                        if(xa.LogLevel === 5 && this.allow.crit) return true;
                         return false;
                     });
         })
