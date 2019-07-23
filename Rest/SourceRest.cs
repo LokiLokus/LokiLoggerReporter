@@ -31,15 +31,17 @@ namespace lokiloggerreporter.Rest {
 					Source = x.Key,
 					Count = x.Count(d => d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime"))),
 					AllCount = x.Count(),
-					Level = x.GroupBy(z => z.LogLevel).Select(z =>
-					new {
-						z.Key,
-						Count = z.Count(d => d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))
-					}),
-					Typ = x.GroupBy(z => z.LogTyp).Select(z =>
+					Level = LogLevelExtension.Levels().Select(l =>
+						new
+						{
+							Level = l,
+							Count = x.Count(d => d.LogLevel == l && d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))
+						}
+					),
+					Typ = LogTypExtension.Typs.Select(z =>
 						new {
-							z.Key,
-							Count = z.Count(d => d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))
+							Typ = z,
+							Count = x.Count(d => d.LogTyp == z && d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))
 						})
 				});
 			return Ok(data);
