@@ -21,6 +21,6 @@ runProject:
     - systemctl start lokilogger 
     
 stages:
-  - clean
   - build
+  - clean
   - run
