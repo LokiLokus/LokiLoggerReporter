@@ -59,11 +59,14 @@ namespace lokiloggerreporter {
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
+				var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
+				InitHelper.AddLogs(ctx);
 			}
 			else
 			{
 				app.UseExceptionHandler("/Home/Error");
 				app.UseHsts();
+				Console.WriteLine("HAÖLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
 			}
 
 			app.UseHttpsRedirection();
@@ -76,8 +79,9 @@ namespace lokiloggerreporter {
 					"default",
 					"{controller=Home}/{action=Index}/{id?}");
 			});
-			var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
-			InitHelper.AddLogs(ctx);
+			
+			
+			
 		}
 		
 		private T GetSettings<T>(string section)

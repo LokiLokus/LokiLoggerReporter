@@ -16,21 +16,20 @@ new Vue({
         }
     },
     methods: {
-        source: function(){
+        getSource: function(){
             var url = window.location.pathname;
             var urls = url.split("/");
             var path;
             for (var i = 0; i < urls.length; i++) {
                 if(urls[i] === "Source"){
                     if(urls.length > i){
-                        
+                        this.source = urls[i+1];
+                        break;
                     }
-                    parh = urls
                 }
             }
             
-        }
-        
+        },       
         
         getData: function () {
             axios.get('/api/Logging/GetLogBySource/' + this.source + '/0-' + this.count)
@@ -59,6 +58,8 @@ new Vue({
 
     },
     mounted: function () {
+        this.getSource();
+        this.getData();
     },
     computed: {
         isEmpty: function () {

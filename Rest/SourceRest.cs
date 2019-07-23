@@ -18,7 +18,7 @@ namespace lokiloggerreporter.Rest {
 		public ActionResult GetAllSources()
 		{
 
-			var data = ctx.Logs.GroupBy(x => x.Name.ToLower())
+			var data = ctx.Logs.GroupBy(x => x.Name)
 				.Select(x => new
 				{
 					Source = x.Key,
