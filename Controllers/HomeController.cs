@@ -19,7 +19,7 @@ namespace lokiloggerreporter.Controllers {
 		}
 
 		[HttpGet("Source/{source}")]
-		public IActionResult AnalyzeSource(string source)
+		public IActionResult AnalyzeSource([FromRoute]string source)
 		{
 			return View("AnalyzeSource");
 		}
@@ -29,6 +29,19 @@ namespace lokiloggerreporter.Controllers {
 		public IActionResult AnalyzeSource()
 		{
 			return View("AnalyzeSource");
+		}
+
+		[HttpGet("Table")]
+		public IActionResult Table()
+		{
+			return View("Table");
+		}
+		
+		
+		[HttpGet("Table/{source}")]
+		public IActionResult Table([FromRoute]string source)
+		{
+			return View("Table");
 		}
 	}
 }

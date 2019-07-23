@@ -19,7 +19,6 @@ var app = new Vue({
         });
         },
         getState: function (x) {
-            console.log(x)
             if(x.Level[5].Count > 0){
                 return 'bg-critical';
             }
