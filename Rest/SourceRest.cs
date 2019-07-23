@@ -37,12 +37,12 @@ namespace lokiloggerreporter.Rest {
 							Level = l,
 							Count = x.Count(d => d.LogLevel == l && d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))
 						}
-					),
+					).OrderBy(f => f.Level),
 					Typ = LogTypExtension.Typs.Select(z =>
 						new {
 							Typ = z,
 							Count = x.Count(d => d.LogTyp == z && d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))
-						})
+						}).OrderBy(f => f.Typ)
 				});
 			return Ok(data);
 		}

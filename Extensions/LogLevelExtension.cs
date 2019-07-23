@@ -8,11 +8,11 @@ namespace lokiloggerreporter.Extensions {
 		{
 			return new List<LogLevel>()
 			{
-				LogLevel.Critical,
+				LogLevel.Verbose,
 				LogLevel.Debug,
 				LogLevel.Information,
-				LogLevel.Verbose,
 				LogLevel.Warning,
+				LogLevel.Critical,
 				LogLevel.SystemCritical
 			};
 		}

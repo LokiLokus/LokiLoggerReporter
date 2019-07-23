@@ -1,6 +1,6 @@
 Vue.component('dashboard-card', {
     
-    props:['color','count','type','message','link'],
+    props:['color','count','message','link'],
     
     template: '<div class="col-xl-3 col-sm-6 mb-3">\n' +
         '        <div :class="color" class="card text-white o-hidden h-100">\n' +

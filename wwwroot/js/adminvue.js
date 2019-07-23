@@ -18,7 +18,28 @@ var app = new Vue({
             }
         });
         },
-
+        getState: function (x) {
+            console.log(x)
+            if(x.Level[5].Count > 0){
+                return 'bg-critical';
+            }
+            if(x.Level[4].Count > 0){
+                return 'bg-danger';
+            }
+            if(x.Level[3].Count > 0){
+                return 'bg-warning';
+            }
+            if(x.Level[2].Count > 0){
+                return 'bg-info';
+            }
+            if(x.Level[1].Count > 0){
+                return 'bg-success';
+            }
+            if(x.Level[0].Count > 0){
+                return 'bg-success';
+            }
+            return 'bg-success';
+        }
     },
     mounted: function () {
         this.getData()
@@ -26,7 +47,8 @@ var app = new Vue({
     computed: {
         isEmpty: function () {
             return isEmpty(this.selData)
-        }
+        },
+        
     },
     filters: {
     },

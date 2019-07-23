@@ -30,6 +30,15 @@ namespace lokiloggerreporter.Services {
 				LogTyp = LogTyp.Normal,
 				LogLevel = LogLevel.Information
 			});
+			ctx.Logs.Add(new Log()
+			{
+				Name = "RRS",
+				Class = "sdfgsdfg",
+				Data = "Information",
+				LogTyp = LogTyp.Normal,
+				LogLevel = LogLevel.Information,
+				Time = DateTime.Now
+			});
 			ctx.SaveChanges();
 		}
 

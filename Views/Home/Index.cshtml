@@ -3,7 +3,7 @@
 }
 <div id="adminvue" class="row">
 
-    <dashboard-card v-for="x in data" color="{'bg-success'" :count="x.AllCount" type="Informations" :link="'/Source/' + x.Source" :message="x.Source"></dashboard-card>
+    <dashboard-card v-for="x in data" :color="getState(x)" :count="x.AllCount" :link="'/Source/' + x.Source" :message="x.Source"></dashboard-card>
     
 </div>
 
