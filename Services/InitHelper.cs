@@ -1,3 +1,4 @@
+using System;
 using lokiloggerreporter.Models;
 
 namespace lokiloggerreporter.Services {
@@ -30,6 +31,12 @@ namespace lokiloggerreporter.Services {
 				LogLevel = LogLevel.Information
 			});
 			ctx.SaveChanges();
+		}
+
+		public static void SetSettings(ISettingsService settingsService)
+		{
+			settingsService.Set("SourceLogCountTime",TimeSpan.FromDays(-1));
+			
 		}
 	}
 }

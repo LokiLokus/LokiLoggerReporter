@@ -50,7 +50,9 @@ namespace lokiloggerreporter {
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 				options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-			
+
+			services.AddSingleton<ISettingsService, SettingService>();
+
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,12 +63,16 @@ namespace lokiloggerreporter {
 				app.UseDeveloperExceptionPage();
 				var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
 				InitHelper.AddLogs(ctx);
+				
+				var settingsService= serviceProvider.GetRequiredService<ISettingsService>();
+
+				InitHelper.SetSettings(settingsService);
+
 			}
 			else
 			{
 				app.UseExceptionHandler("/Home/Error");
 				app.UseHsts();
-				Console.WriteLine("HAÖLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
 			}
 
 			app.UseHttpsRedirection();
