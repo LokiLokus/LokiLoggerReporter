@@ -32,8 +32,8 @@
         :striped="true"
         :per-page="perPage"
         :filter="filter"
-        @@row-clicked="expandAdditionalInfo"
         @@filtered="onFiltered"
+        @@row-clicked="expandAdditionalInfo"
     >
         <template slot="LogLevel" slot-scope="row">
             <i v-if="row.item.LogLevel == 0 || row.item.LogLevel == 1" class="fas fa-bug"></i>
@@ -42,30 +42,29 @@
             <i v-if="row.item.LogLevel == 4" class="fas fa-times"></i>
             <i v-if="row.item.LogLevel == 5" class="fas fa-skull-crossbones"></i>
         </template>
-        
+
         <template slot="LogTyp" slot-scope="row">
             <i v-if="row.item.LogTyp == 0" class="fas fa-info"></i>
             <i v-if="row.item.LogTyp == 1" class="fas fa-exclamation"></i>
             <i v-if="row.item.LogTyp == 2" class="fas fa-undo"></i>
             <i v-if="row.item.LogTyp == 3" class="fas fa-play"></i>
         </template>
-        
+
         <template slot="Time" slot-scope="row">
             {{row.item.Time | date}}
         </template>
-        
-        
+
         <template slot="Message" slot-scope="row">
             {{row.item | message }}
         </template>
-        
+
         <template slot="row-details" slot-scope="row">
             <b-card>
-              <ul>
-                <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-              </ul>
+                <ul>
+                    <li v-for="(value, key) in row.item" :key="key" v-if="key != '_showDetails' &&  value && ( key != 'Data' || key == 'Data' && value != '[]')">{{ key }}: {{ value }}</li>
+                </ul>
             </b-card>
-          </template>
+        </template>
 
     </b-table>
 
