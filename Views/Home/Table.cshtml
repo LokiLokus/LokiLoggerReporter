@@ -2,7 +2,7 @@
     ViewData["Title"] = "Table";
 }
 <div id="tableAnalyze">
-
+<b-container fluid>
     <b-row>
         <b-col md="6" class="my-1">
             <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
@@ -28,11 +28,11 @@
         :items="data"
         :fields="fields"
         :current-page="currentPage"
-        small="true"
-        striped="true"
+        :small="true"
+        :striped="true"
         :per-page="perPage"
         :filter="filter"
-        
+        @@row-clicked="expandAdditionalInfo"
         @@filtered="onFiltered"
     >
         <template slot="LogLevel" slot-scope="row">
@@ -49,19 +49,27 @@
             <i v-if="row.item.LogTyp == 2" class="fas fa-undo"></i>
             <i v-if="row.item.LogTyp == 3" class="fas fa-play"></i>
         </template>
+        
         <template slot="Time" slot-scope="row">
             {{row.item.Time | date}}
         </template>
-
+        
+        
+        <template slot="Message" slot-scope="row">
+            {{row.item | message }}
+        </template>
+        
         <template slot="row-details" slot-scope="row">
             <b-card>
-                <ul>
-                    <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-                </ul>
+              <ul>
+                <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+              </ul>
             </b-card>
-        </template>
+          </template>
+
     </b-table>
 
+    
     <b-row>
         <b-col md="6" class="my-1">
             <b-pagination
@@ -72,6 +80,7 @@
             ></b-pagination>
         </b-col>
     </b-row>
+</b-container>
 </div>
 
 
