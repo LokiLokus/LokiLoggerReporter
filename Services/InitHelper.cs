@@ -12,6 +12,7 @@ namespace lokiloggerreporter.Services {
 				Class = "asdas",
 				Data = "asdpkdf",
 				LogTyp = LogTyp.Exception,
+				Message = "Du bist hallo",
 				LogLevel = LogLevel.Critical
 			});
 			ctx.Logs.Add(new Log()

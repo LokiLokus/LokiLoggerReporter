@@ -73,8 +73,8 @@ new Vue({
             return t.toLocaleTimeString();
         },
         message:function (value) {
-            if (!value || !value.message) return '';
-            var result = value.message.replace(/ {[\s\S]*?}/g, value.data);
+            if (!value || !value.Message) return '';
+            var result = value.Message.replace(/ {[\s\S]*?}/g, value.Data);
             return result
         }
     },

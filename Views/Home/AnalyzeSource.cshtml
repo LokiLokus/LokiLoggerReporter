@@ -61,7 +61,7 @@
                             <i v-if="log.LogLevel == 4" class="fas fa-times"></i>
                             <i v-if="log.LogLevel == 5" class="fas fa-skull-crossbones"></i>
                         </td>
-                        <td>{{log.time | date}}</td>
+                        <td>{{log.Time | date}}</td>
                         <td>{{log | message }}</td>
                     </tr>
                     </tbody>
