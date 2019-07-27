@@ -28,7 +28,7 @@ var app = new Vue({
             crit:true,
             norm:true,
             except:true,
-            return:true,
+            retur:true,
             invoke:true
         }
     },
@@ -92,9 +92,9 @@ var app = new Vue({
             result = result.filter(xa => {
                 if(xa.LogTyp === 0 && this.norm) return true;
                 if(xa.LogTyp === 1 && this.except) return true;
-                if(xa.LogTyp === 2 && this.return) return true;
+                if(xa.LogTyp === 2 && this.retur) return true;
                 if(xa.LogTyp === 3 && this.invoke) return true;
-                return false
+                return false;
             });
 
             this.totalRows = result.length
