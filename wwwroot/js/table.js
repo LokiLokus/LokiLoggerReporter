@@ -12,6 +12,8 @@ var app = new Vue({
             sortBy: null,
             sortDesc: false,
             sortDirection: 'asc',
+            from: new Date(),
+            to: new Date(),
             fields: [
                 { key: 'LogLevel', label: 'Lvl', sortable: true, class: 'text-center'},
                 { key: 'LogTyp', label: 'Typ', sortable: true, class: 'text-center'},
@@ -19,6 +21,11 @@ var app = new Vue({
                 { key: 'Message', label: 'Nachricht',sortable:true }
             ],
             filter: null,
+            debug:true,
+            info:true,
+            warn:true,
+            error:true,
+            crit:true
         }
     },
     methods: {
@@ -40,7 +47,6 @@ var app = new Vue({
             axios.get('/api/Logging/GetLogBySource/' + this.source + '/0-' + this.count)
                 .then(x => {
                     this.data = x.data;
-                    this.totalRows = this.data.length
                 }).catch(x => {
                 if(x.response){
                     this.errors = x.response.data;
@@ -66,6 +72,21 @@ var app = new Vue({
                 .map(f => {
                     return { text: f.label, value: f.key }
                 })
+        },
+        filterd: function () {
+            var result = this.data;
+            
+            result = result.filter(xa =>{
+                if((xa.LogLevel === 0 || xa.LogLevel === 1)&& this.debug) return true;
+                if(xa.LogLevel === 2 && this.info) return true;
+                if(xa.LogLevel === 3 && this.warn) return true;
+                if(xa.LogLevel === 4 && this.error) return true;
+                if(xa.LogLevel === 5 && this.crit) return true;
+                return false;
+            });
+
+            this.totalRows = result.length
+            return result;
         }
     },
     mounted() {
