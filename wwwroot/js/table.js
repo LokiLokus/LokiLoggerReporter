@@ -25,7 +25,11 @@ var app = new Vue({
             info:true,
             warn:true,
             error:true,
-            crit:true
+            crit:true,
+            norm:true,
+            except:true,
+            return:true,
+            invoke:true
         }
     },
     methods: {
@@ -83,6 +87,14 @@ var app = new Vue({
                 if(xa.LogLevel === 4 && this.error) return true;
                 if(xa.LogLevel === 5 && this.crit) return true;
                 return false;
+            });
+            
+            result = result.filter(xa => {
+                if(xa.LogTyp === 0 && this.norm) return true;
+                if(xa.LogTyp === 1 && this.except) return true;
+                if(xa.LogTyp === 2 && this.return) return true;
+                if(xa.LogTyp === 3 && this.invoke) return true;
+                return false
             });
 
             this.totalRows = result.length

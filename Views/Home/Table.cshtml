@@ -26,7 +26,7 @@
                     </b-input-group>
                 </b-form-group>
             </b-col>
-
+<!--LogLevel-->
             <b-dropdown id="dropdown-form" variant="primary" text="LogLevels" ref="dropdown" class="m-2">
                 <b-dropdown-form>
                     <b-dropdown-header id="dropdown-header-label">
@@ -46,6 +46,26 @@
                     </b-form-checkbox>
                     <b-form-checkbox class="mb-3" v-model="crit">
                         <i class="fas fa-skull-crossbones"></i>Critical
+                    </b-form-checkbox>
+                </b-dropdown-form>
+            </b-dropdown>
+            
+            <b-dropdown id="dropdown-form" variant="primary" text="LogTyps" ref="dropdown" class="m-2">
+                <b-dropdown-form>
+                    <b-dropdown-header id="dropdown-header-label">
+                          Log Levels
+                        </b-dropdown-header>
+                    <b-form-checkbox class="mb-3" v-model="norm">
+                        <i class="fas fa-bug"></i> Normal
+                    </b-form-checkbox>
+                    <b-form-checkbox class="mb-3" v-model="except">
+                        <i class="fas fa-exclamation"></i> Exception
+                    </b-form-checkbox>
+                    <b-form-checkbox class="mb-3" v-model="return">
+                        <i class="fas fa-undo"></i> Return
+                    </b-form-checkbox>
+                    <b-form-checkbox class="mb-3" v-model="invoke">
+                        <i class="fas fa-play"></i> Invoke
                     </b-form-checkbox>
                 </b-dropdown-form>
             </b-dropdown>
