@@ -1,7 +1,8 @@
 var app = new Vue({
     data:function(){
         return{
-            data:[]
+            data:[],
+            loaded:false
         }
     },
     methods: {
@@ -9,6 +10,7 @@ var app = new Vue({
             axios.get('/api/Source/All/')
                 .then(x => {
                     this.data = x.data;
+                    this.loaded = true;
             }).catch(x => {
                 if(x.response){
                 this.errors = x.response.data;
