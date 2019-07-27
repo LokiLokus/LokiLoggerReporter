@@ -29,7 +29,8 @@ var app = new Vue({
             norm:true,
             except:true,
             retur:true,
-            invoke:true
+            invoke:true,
+            classFilter:''
         }
     },
     methods: {
@@ -96,7 +97,14 @@ var app = new Vue({
                 if(xa.LogTyp === 3 && this.invoke) return true;
                 return false;
             });
-
+            if(this.classFilter !== ''){
+                result = result.filter (xa =>{
+                    if(xa.Class && xa.Class.toLowerCase().indexOf(this.classFilter.toLowerCase()) !== -1) return true;
+                    if(xa.Method && xa.Method.toLowerCase().indexOf(this.classFilter.toLowerCase()) !== -1) return true;
+                    return false;
+                });
+            }
+            
             this.totalRows = result.length
             return result;
         }

@@ -16,7 +16,7 @@
             </b-col>
 
 
-            <b-col md="6" class="my-1">
+            <b-col md="3" class="my-1">
                 <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
                     <b-input-group>
                         <b-form-input v-model="filter" placeholder="Suche"></b-form-input>
@@ -26,12 +26,22 @@
                     </b-input-group>
                 </b-form-group>
             </b-col>
-<!--LogLevel-->
+
+            <b-col md="3" class="my-1">
+                <b-form-group label-cols-sm="3" label="Filter Class / Method" class="mb-0">
+                    <b-input-group>
+                        <b-form-input v-model="classFilter" placeholder="Class"></b-form-input>
+                    </b-input-group>
+                </b-form-group>
+            </b-col>
+
+
+            <!--LogLevel-->
             <b-dropdown id="dropdown-form" variant="primary" text="LogLevels" ref="dropdown" class="m-2">
                 <b-dropdown-form>
                     <b-dropdown-header id="dropdown-header-label">
-                          Log Levels
-                        </b-dropdown-header>
+                        Log Levels
+                    </b-dropdown-header>
                     <b-form-checkbox class="mb-3" v-model="debug">
                         <i class="fas fa-bug"></i> Debug
                     </b-form-checkbox>
@@ -49,12 +59,12 @@
                     </b-form-checkbox>
                 </b-dropdown-form>
             </b-dropdown>
-            
+
             <b-dropdown id="dropdown-form" variant="primary" text="LogTyps" ref="dropdown" class="m-2">
                 <b-dropdown-form>
                     <b-dropdown-header id="dropdown-header-label">
-                          Log Levels
-                        </b-dropdown-header>
+                        Log Levels
+                    </b-dropdown-header>
                     <b-form-checkbox class="mb-3" v-model="norm">
                         <i class="fas fa-info"></i> Normal
                     </b-form-checkbox>
