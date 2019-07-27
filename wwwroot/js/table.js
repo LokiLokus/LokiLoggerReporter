@@ -6,7 +6,9 @@ var app = new Vue({
             totalRows: 1,
             currentPage: 1,
             perPage: 30,
-            pageOptions: [5, 10, 15],
+            source: '',
+            count: 100,
+            pageOptions: [10, 30, 50, 100],
             sortBy: null,
             sortDesc: false,
             sortDirection: 'asc',
@@ -20,8 +22,22 @@ var app = new Vue({
         }
     },
     methods: {
+        getSource: function(){
+            var url = window.location.pathname;
+            var urls = url.split("/");
+            var path;
+            for (var i = 0; i < urls.length; i++) {
+                if(urls[i] === "Table"){
+                    if(urls.length > i){
+                        this.source = urls[i+1];
+                        break;
+                    }
+                }
+            }
+
+        },
         getData: function () {
-            axios.get('/api/Logging/GetLogBySource/RRS/0-100')
+            axios.get('/api/Logging/GetLogBySource/' + this.source + '/0-' + this.count)
                 .then(x => {
                     this.data = x.data;
                     this.totalRows = this.data.length
@@ -53,6 +69,7 @@ var app = new Vue({
         }
     },
     mounted() {
+        this.getSource();
         this.getData();
     },
     filters: {

@@ -4,7 +4,17 @@
 <div id="tableAnalyze">
 <b-container fluid>
     <b-row>
-        <b-col md="6" class="my-1">
+        <b-col md="3" class="my-1">
+            <b-form-group label-cols-sm="3" label="Source" class="mb-0">
+                <b-input-group>
+                    <b-form-input v-model="source" placeholder="Source"></b-form-input>
+                    <b-input-group-append>
+                        <b-button variant="primary" @@click="getData">Get</b-button>
+                    </b-input-group-append>
+                </b-input-group>
+            </b-form-group>
+        </b-col>
+        <b-col md="3" class="my-1">
             <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
                 <b-input-group>
                     <b-form-input v-model="filter" placeholder="Suche"></b-form-input>
@@ -15,6 +25,17 @@
             </b-form-group>
         </b-col>
 
+        <b-col md="3" class="my-1">
+            <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
+                <b-input-group>
+                    <b-form-input v-model="count" placeholder="100" type="number"></b-form-input>
+                    <b-input-group-append>
+                        <b-button variant="primary" @@click="getData">Get</b-button>
+                    </b-input-group-append>
+                </b-input-group>
+            </b-form-group>
+        </b-col>        
+        
         <b-col md="6" class="my-1">
             <b-form-group label-cols-sm="3" label="Per page" class="mb-0">
                 <b-form-select v-model="perPage" :options="pageOptions"></b-form-select>
