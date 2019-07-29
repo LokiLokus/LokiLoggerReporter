@@ -29,19 +29,19 @@ namespace lokiloggerreporter.Rest {
 				.Select(x => new
 				{
 					Source = x.Key,
-					Count = x.Count(d => d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime"))),
-					AllCount = x.Count(),
+					Count = x.Where(d => d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime"))).Sum(f => 1),
+					AllCount = x.Sum(f => 1),
 					Level = LogLevelExtension.Levels().Select(l =>
 						new
 						{
 							Level = l,
-							Count = x.Count(d => d.LogLevel == l && d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))
+							Count = x.Where(d => d.LogLevel == l && d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime"))).Sum(f => 1)
 						}
 					).OrderBy(f => f.Level),
 					Typ = LogTypExtension.Typs.Select(z =>
 						new {
 							Typ = z,
-							Count = x.Count(d => d.LogTyp == z && d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))
+							Count = x.Where(d => d.LogTyp == z && d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime"))).Sum(f => 1)
 						}).OrderBy(f => f.Typ)
 				});
 			return Ok(data);
