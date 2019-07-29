@@ -51,9 +51,9 @@ namespace lokiloggerreporter.Rest {
 							Count = x.Where(d => d.LogTyp == z).Sum(f => 1)
 						}).OrderBy(f => f.Typ)
 				});
-			 var zerodata = names.Where(x => !data.Any(d => d.Source == x)).Select(x => new
+			 var zerodata = names.Where(x => !data.Any(d => d.Source == x.Name)).Select(x => new
 				{
-					Source = x.Key,
+					Source = x.Name,
 					Count = x.Sum(f => 1),
 					AllCount = x.Sum(f => 1),
 					Level = LogLevelExtension.Levels().Select(l =>
