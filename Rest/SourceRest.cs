@@ -27,7 +27,7 @@ namespace lokiloggerreporter.Rest {
 		[HttpGet("All")]
 		public ActionResult GetAllSources()
 		{
-			var names = ctx.Logs.DistinctBy(x => Name).ToList();
+			var names = ctx.Logs.DistinctBy(x => x.Name).ToList();
 			
 			
 
