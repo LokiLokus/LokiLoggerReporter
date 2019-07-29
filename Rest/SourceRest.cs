@@ -37,7 +37,7 @@ namespace lokiloggerreporter.Rest {
 				{
 					Source = x.Key,
 					Count = x.Sum(f => 1),
-					AllCount = ctx.Where(f => f.Name == x.Name),
+					AllCount = ctx.Logs.Where(f => f.Name == x.Name),
 					Level = LogLevelExtension.Levels().Select(l =>
 						new
 						{
@@ -55,7 +55,7 @@ namespace lokiloggerreporter.Rest {
 				{
 					Source = x.Name,
 					Count = 0,
-					AllCount = ctx.Where(f => f.Name == x.Name),
+					AllCount = ctx.Logs.Where(f => f.Name == x.Name),
 					Level = LogLevelExtension.Levels().Select(l =>
 						new
 						{
