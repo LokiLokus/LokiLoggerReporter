@@ -51,7 +51,7 @@ namespace lokiloggerreporter.Rest {
 							Count = x.Where(d => d.LogTyp == z).Sum(f => 1)
 						}).OrderBy(f => f.Typ)
 				});
-			 var zerodata = names.Where(x => !data.Any(d => d.Source == x.Name)).Select(x => new
+			 /*var zerodata = names.Where(x => !data.Any(d => d.Source == x.Name)).Select(x => new
 				{
 					Source = x.Name,
 					Count = 0,
@@ -68,10 +68,10 @@ namespace lokiloggerreporter.Rest {
 							Typ = z,
 							Count = 0
 						}).OrderBy(f => f.Typ)
-				});
-			var tmp = data.ToList();
-			tmp.AddRange(zerodata);
-			return Ok(tmp);
+				});*/
+			//var tmp = data.ToList();
+			//tmp.AddRange(zerodata);
+			return Ok(data);
 		}
 	}
 }
