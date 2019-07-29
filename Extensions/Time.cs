@@ -1,5 +1,8 @@
 using System;
 
+using System.IO;
+using System.Collections;
+using System.Linq;
 namespace lokiloggerreporter.Extensions {
 	public static class Time {
 
