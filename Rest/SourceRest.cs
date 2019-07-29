@@ -25,26 +25,51 @@ namespace lokiloggerreporter.Rest {
 		[HttpGet("All")]
 		public ActionResult GetAllSources()
 		{
-			var data = ctx.Logs.GroupBy(x => x.Name)
+			var names = ctx.Logs.Distinct(x => Name);
+			
+			
+
+			var data = ctx.Logs.Where(d => d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))	
+			.GroupBy(x => x.Name)
 				.Select(x => new
 				{
 					Source = x.Key,
-					Count = x.Where(d => d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime"))).Sum(f => 1),
+					Count = x.Where().Sum(f => 1),
 					AllCount = x.Sum(f => 1),
 					Level = LogLevelExtension.Levels().Select(l =>
 						new
 						{
 							Level = l,
-							Count = x.Where(d => d.LogLevel == l && d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime"))).Sum(f => 1)
+							Count = x.Where(d => d.LogLevel == l ).Sum(f => 1)
 						}
 					).OrderBy(f => f.Level),
 					Typ = LogTypExtension.Typs.Select(z =>
 						new {
 							Typ = z,
-							Count = x.Where(d => d.LogTyp == z && d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime"))).Sum(f => 1)
+							Count = x.Where(d => d.LogTyp == z).Sum(f => 1)
 						}).OrderBy(f => f.Typ)
 				});
-			return Ok(data);
+			 var zerodata = names.Where(x => !data.Any(d => d.Source == x)).Select(x => new
+				{
+					Source = x.Key,
+					Count = x.Where().Sum(f => 1),
+					AllCount = x.Sum(f => 1),
+					Level = LogLevelExtension.Levels().Select(l =>
+						new
+						{
+							Level = l,
+							Count = 0
+						}
+					).OrderBy(f => f.Level),
+					Typ = LogTypExtension.Typs.Select(z =>
+						new {
+							Typ = z,
+							Count = 0
+						}).OrderBy(f => f.Typ)
+				});
+			var tmp = data.ToList();
+			tmp.AddRange(zerodata);
+			return Ok(tmp);
 		}
 	}
 }
