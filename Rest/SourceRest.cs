@@ -7,6 +7,8 @@ using lokiloggerreporter.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Storage;
 
+using System.IO;
+using System.Collections;
 namespace lokiloggerreporter.Rest {
 	[Route("api/Source")]
 	[ApiController]
