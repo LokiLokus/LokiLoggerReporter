@@ -49,7 +49,7 @@ namespace lokiloggerreporter.Services {
 
 		public static void SetSettings(ISettingsService settingsService)
 		{
-			settingsService.Set("SourceLogCountTime",TimeSpan.FromDays(-10));
+			settingsService.Set("SourceLogCountTime",TimeSpan.FromDays(-100));
 			
 		}
 
