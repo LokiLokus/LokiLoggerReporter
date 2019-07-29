@@ -31,7 +31,7 @@ namespace lokiloggerreporter.Rest {
 			
 			
 
-			var data = ctx.Logs.Where(d => d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))	
+			var data = ctx.Logs.Where(d =>true || d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")))	
 			.GroupBy(x => x.Name)
 				.Select(x => new
 				{
