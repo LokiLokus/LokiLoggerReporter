@@ -130,6 +130,13 @@ var app = new Vue({
             if(lvl == 4) return "Critical";
             return "";
         },
+        typ:function(typ){
+            if(typ == 0) return "";
+            if(typ == 1) return "Exception";
+            if(typ == 2) return "Return";
+            if(typ == 3) return "Invoke";
+            return "";
+        },
         date: function (value) {
             if (!value) return '';
             var t = new Date(value);

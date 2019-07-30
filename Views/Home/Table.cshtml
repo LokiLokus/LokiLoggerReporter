@@ -121,7 +121,7 @@
                     <ul style="list-style-type: none;">
                         <li>       </li>
                         <li>
-                            <span style="font-weight:bolder">{{row.item.LogLevel | level}}</span> - {{row.item.ID}}
+                            <span style="font-weight:bolder">{{row.item.LogLevel | level}} - {{row.item.LogTyp | typ}}</span> - {{row.item.ID}}
                         </li>
                         <li>{{row.item.Class}}.{{row.item.Method}}:<span v-if="row.item.Line > 0">{{row.item.Line}}</span></li>
                         
