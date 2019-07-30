@@ -139,7 +139,7 @@ var app = new Vue({
         },
         nBreak:function(br){
             if(br == null) return "";
-            return br.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            return br.replace(/(\\n)/g, '<br>');
         },
         date: function (value) {
             if (!value) return '';

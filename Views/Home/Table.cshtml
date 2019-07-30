@@ -119,16 +119,16 @@
             <template slot="row-details" slot-scope="row">
                 <b-card>
                     <ul style="list-style-type: none;">
-                        <li>       </li>
+                        <li>{{row.item.Time}}</li>
                         <li>
                             <span style="font-weight:bolder">{{row.item.LogLevel | level}} - {{row.item.LogTyp | typ}}</span> - {{row.item.ID}}
                         </li>
                         <li>{{row.item.Class}}.{{row.item.Method}}:<span v-if="row.item.Line > 0">{{row.item.Line}}</span></li>
                         <li>{{row.item | message}}</li>
-                        <li>{{row.item.Exception | nBreak}}</li>
+                        <li v-if="row.item.LogTyp == 1"><h6>Exception</h6></li>
+                        <li v-if="row.item.LogTyp == 1" :inner-html.prop="row.item.Exception | nBreak"></li>
                         <li>{{row.item.Data}}</li>
-                        <li>-</li>
-                        <li v-for="(value, key) in row.item" :key="key" v-if="key != '_showDetails' &&  value && ( key != 'Data' || key == 'Data' && value != '[]')">{{ key }}: {{ value }}</li>
+                        <!--<li v-for="(value, key) in row.item" :key="key" v-if="key != '_showDetails' &&  value && ( key != 'Data' || key == 'Data' && value != '[]')">{{ key }}: {{ value }}</li>-->
                     </ul>
                 </b-card>
             </template>

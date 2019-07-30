@@ -15,6 +15,7 @@ namespace lokiloggerreporter.Services {
 				Class = "asdas",
 				Data = "asdpkdf",
 				LogTyp = LogTyp.Exception,
+				Exception = "Hallo \\n asdsad \\n  sdafgdf",
 				Message = "Du bist hallo",
 				LogLevel = LogLevel.Critical,
 				Time = DateTime.Now.AddDays(-100)
