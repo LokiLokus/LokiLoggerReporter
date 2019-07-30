@@ -126,9 +126,11 @@
                         <li>{{row.item.Class}}.{{row.item.Method}}:<span v-if="row.item.Line > 0">{{row.item.Line}}</span></li>
                         <li>{{row.item | message}}</li>
                         <li>{{row.item.Exception | nBreak}}
-                        
-
-
+                        <li>-</li>
+                        <li>-</li>
+                        <li>-</li>
+                        <li>-</li>
+                        <li>-</li>
                         <li v-for="(value, key) in row.item" :key="key" v-if="key != '_showDetails' &&  value && ( key != 'Data' || key == 'Data' && value != '[]')">{{ key }}: {{ value }}</li>
                     </ul>
                 </b-card>
