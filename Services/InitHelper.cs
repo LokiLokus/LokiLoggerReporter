@@ -8,6 +8,28 @@ namespace lokiloggerreporter.Services {
 
 		public static void AddLogs(DatabaseCtx ctx)
 		{
+			
+			ctx.Logs.Add(new Log()
+			{
+				Name = "OldTest",
+				Class = "asdas",
+				Data = "asdpkdf",
+				LogTyp = LogTyp.Exception,
+				Message = "Du bist hallo",
+				LogLevel = LogLevel.Critical,
+				Time = DateTime.Now.AddDays(-100)
+			});
+			
+			ctx.Logs.Add(new Log()
+			{
+				Name = "OldTest",
+				Class = "asdas",
+				Data = "asdpkdf",
+				LogTyp = LogTyp.Exception,
+				Message = "Du bist hallo",
+				LogLevel = LogLevel.Critical,
+				Time = DateTime.Now.AddDays(-100)
+			});
 			ctx.Logs.Add(new Log()
 			{
 				Name = "Test",
@@ -15,7 +37,8 @@ namespace lokiloggerreporter.Services {
 				Data = "asdpkdf",
 				LogTyp = LogTyp.Exception,
 				Message = "Du bist hallo",
-				LogLevel = LogLevel.Critical
+				LogLevel = LogLevel.Critical,
+				Time = DateTime.Now
 			});
 			ctx.Logs.Add(new Log()
 			{
@@ -23,7 +46,8 @@ namespace lokiloggerreporter.Services {
 				Class = "sdfgsdfg",
 				Data = "Information",
 				LogTyp = LogTyp.Normal,
-				LogLevel = LogLevel.Information
+				LogLevel = LogLevel.Information,
+				Time = DateTime.Now
 			});
 			ctx.Logs.Add(new Log()
 			{
@@ -31,7 +55,8 @@ namespace lokiloggerreporter.Services {
 				Class = "sdfgsdfg",
 				Data = "Information",
 				LogTyp = LogTyp.Normal,
-				LogLevel = LogLevel.Information
+				LogLevel = LogLevel.Information,
+				Time = DateTime.Now
 			});
 			ctx.Logs.Add(new Log()
 			{
@@ -49,7 +74,7 @@ namespace lokiloggerreporter.Services {
 
 		public static void SetSettings(ISettingsService settingsService)
 		{
-			settingsService.Set("SourceLogCountTime",TimeSpan.FromDays(-100));
+			settingsService.Set("SourceLogCountTime",TimeSpan.FromDays(-1));
 			
 		}
 
