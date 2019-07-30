@@ -124,10 +124,10 @@ var app = new Vue({
     filters: {
         level:function(lvl){
             if(lvl == 0 || lvl == 1) return "Debug";
-            if(lvl == 1) return "Information";
-            if(lvl == 2) return "Warning";
-            if(lvl == 3) return "Error";
-            if(lvl == 4) return "Critical";
+            if(lvl == 2) return "Information";
+            if(lvl == 3) return "Warning";
+            if(lvl == 4) return "Error";
+            if(lvl == 5) return "Critical";
             return "";
         },
         typ:function(typ){
