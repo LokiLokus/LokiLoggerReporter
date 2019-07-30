@@ -30,7 +30,8 @@ var app = new Vue({
             except:true,
             retur:true,
             invoke:true,
-            classFilter:''
+            classFilter:'',
+            after:''
         }
     },
     methods: {
@@ -79,8 +80,14 @@ var app = new Vue({
                 })
         },
         filterd: function () {
-            var result = this.data;
-            
+            var result = this.data;// moment(this.after,"YYYY-MM-DD HH:mm:ss");
+            /*
+            result = result.filter(x => {
+                
+                if(x.Time >= this.after) return true;
+                return false;
+            });
+            */
             result = result.filter(xa =>{
                 if((xa.LogLevel === 0 || xa.LogLevel === 1)&& this.debug) return true;
                 if(xa.LogLevel === 2 && this.info) return true;
@@ -105,11 +112,12 @@ var app = new Vue({
                 });
             }
             
-            this.totalRows = result.length
+            this.totalRows = result.length;
             return result;
         }
     },
     mounted() {
+        this.after = moment(new Date(),"YYYY-MM-DD HH:mm:ss");
         this.getSource();
         this.getData();
     },

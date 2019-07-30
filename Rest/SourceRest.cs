@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using lokiloggerreporter.Extensions;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
@@ -24,6 +25,9 @@ namespace lokiloggerreporter.Rest {
 		public ActionResult GetAllSources()
 		{
 			var names = ctx.Logs.DistinctBy(x => x.Name);
+			
+			List<Task> runner = new List<Task>();
+			
 			var data = ctx.Logs.Where(d =>
 				d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime"))).GroupBy(x => x.Name)
 				.Select(x => new
