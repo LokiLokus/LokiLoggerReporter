@@ -122,6 +122,14 @@ var app = new Vue({
         this.getData();
     },
     filters: {
+        level:function(lvl){
+            if(lvl == 0 || lvl == 1) return "Debug";
+            if(lvl == 1) return "Information";
+            if(lvl == 2) return "Warning";
+            if(lvl == 3) return "Error";
+            if(lvl == 4) return "Critical";
+            return "";
+        },
         date: function (value) {
             if (!value) return '';
             var t = new Date(value);

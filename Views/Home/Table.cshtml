@@ -34,8 +34,6 @@
                     </b-input-group>
                 </b-form-group>
             </b-col>
-            
-
 
             <!--LogLevel-->
             <b-dropdown id="dropdown-form" variant="primary" text="LogLevels" ref="dropdown" class="m-2">
@@ -120,8 +118,15 @@
 
             <template slot="row-details" slot-scope="row">
                 <b-card>
-                    <ul>
-                        <li>{{row.item.Class}}:{{row.item.Method}}<span v-if="row.item.Line > 0">{{row.item.Line}}</span></li>
+                    <ul style="list-style-type: none;">
+                        <li>       </li>
+                        <li>
+                            <span style="font-weight:bolder">{{row.item.LogLevel | level}}</span> - {{row.item.ID}}
+                        </li>
+                        <li>{{row.item.Class}}.{{row.item.Method}}:<span v-if="row.item.Line > 0">{{row.item.Line}}</span></li>
+                        
+
+
                         <li v-for="(value, key) in row.item" :key="key" v-if="key != '_showDetails' &&  value && ( key != 'Data' || key == 'Data' && value != '[]')">{{ key }}: {{ value }}</li>
                     </ul>
                 </b-card>
