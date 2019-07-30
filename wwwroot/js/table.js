@@ -137,6 +137,9 @@ var app = new Vue({
             if(typ == 3) return "Invoke";
             return "";
         },
+        nBreak:function(br){
+            return br.replace(/(?:\r\n|\r|\n)/g, '<br>');
+        },
         date: function (value) {
             if (!value) return '';
             var t = new Date(value);
