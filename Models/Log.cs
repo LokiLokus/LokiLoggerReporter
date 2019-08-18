@@ -20,6 +20,11 @@ namespace lokiloggerreporter.Models {
 		public string Name { get; set; }
 		public long ElapsedTime { get; set; }
 
+		[ForeignKey("Source")]
+		public string SourceId { get; set; }
+
+		public Source Source { get; set; }
+
 	}
 	public enum LogTyp
 	{
