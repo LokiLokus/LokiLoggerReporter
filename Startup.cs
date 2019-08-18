@@ -65,9 +65,8 @@ namespace lokiloggerreporter {
 				InitHelper.AddLogs(ctx);
 				
 				var settingsService= serviceProvider.GetRequiredService<ISettingsService>();
-
+				InitHelper.CreateSource(ctx);
 				InitHelper.SetSettings(settingsService);
-
 			}
 			else
 			{

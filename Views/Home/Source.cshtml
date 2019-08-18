@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Source";
+}
+<div id="adminvue" class="h-100">
+    <div class="middle container h-100 d-flex justify-content-center" v-if="!loaded">
+        <b-spinner variant="primary" style="width: 10rem; height: 10rem;" label="Waitin"></b-spinner>
+    </div>
+    <div class="row">
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="/js/source.js"></script>
+}

@@ -83,6 +83,7 @@ namespace lokiloggerreporter.Rest {
 		[HttpGet("LastStatistic")]
 		public ActionResult GetAllSources()
 		{
+			/*
 			var names = DatabaseContext.Logs.DistinctBy(x => x.Name);
 			
 			List<Task> runner = new List<Task>();
@@ -130,7 +131,8 @@ namespace lokiloggerreporter.Rest {
 			});
 			var tmp = data.ToList();
 			tmp.AddRange(zerodata);
-			return Ok(tmp);
+			return Ok(tmp);*/
+			throw new NotImplementedException();
 		}
 	}
 }

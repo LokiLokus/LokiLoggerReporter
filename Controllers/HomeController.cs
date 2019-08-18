@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using lokiloggerreporter.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Razor.Internal;
 using static System.String;
 
 namespace lokiloggerreporter.Controllers {
@@ -25,7 +26,7 @@ namespace lokiloggerreporter.Controllers {
 		}
 		
 		
-		[HttpGet("Source")]
+		[HttpGet("AnalyzeSource")]
 		public IActionResult AnalyzeSource()
 		{
 			return View("AnalyzeSource");
@@ -36,7 +37,13 @@ namespace lokiloggerreporter.Controllers {
 		{
 			return View("Table");
 		}
-		
+
+
+		[HttpGet("Source")]
+		public IActionResult Source()
+		{
+			return View("Source");
+		}
 		
 		[HttpGet("Table/{source}")]
 		public IActionResult Table([FromRoute]string source)

@@ -17,7 +17,6 @@ namespace lokiloggerreporter.Models {
 		public LogTyp LogTyp { get; set; }
 		public string Exception { get; set; }
 		public string Data { get; set; }
-		public string Name { get; set; }
 		public long ElapsedTime { get; set; }
 
 		[ForeignKey("Source")]
