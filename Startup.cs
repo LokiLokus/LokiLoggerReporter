@@ -62,10 +62,11 @@ namespace lokiloggerreporter {
 			{
 				app.UseDeveloperExceptionPage();
 				var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
+				InitHelper.CreateSource(ctx);
 				InitHelper.AddLogs(ctx);
 				
 				var settingsService= serviceProvider.GetRequiredService<ISettingsService>();
-				InitHelper.CreateSource(ctx);
+				
 				InitHelper.SetSettings(settingsService);
 			}
 			else

@@ -1,12 +1,32 @@
 @{
     ViewData["Title"] = "Source";
 }
-<div id="adminvue" class="h-100">
+<div id="sourcevue" class="h-100">
     <div class="middle container h-100 d-flex justify-content-center" v-if="!loaded">
         <b-spinner variant="primary" style="width: 10rem; height: 10rem;" label="Waitin"></b-spinner>
     </div>
-    <div class="row">
-    </div>
+        <b-row>
+            <b-col md="3" class="my-1">
+                <b-table striped hover :items="data" :fields="fields"
+                         @@row-clicked="select" ></b-table>
+            </b-col>
+            <b-col md="9" class="my-1" v-if="isEmpty()">
+                <b-form-group
+                        id="input-group-1"
+                        label="Name:"
+                        label-for="input-1"
+                        description="Name of your Source"
+                      >
+                        <b-form-input
+                          id="input-1"
+                          v-model="selData.Name"
+                          type="text"
+                          required
+                          placeholder="Main System"
+                        ></b-form-input>
+                    </b-form-group>
+            </b-col>
+        </b-row>
 </div>
 
 

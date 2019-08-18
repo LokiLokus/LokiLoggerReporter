@@ -1,6 +1,11 @@
 var app = new Vue({
     data:function(){
         return{
+            fields:[
+                { key: 'Name', label: 'Name', sortable: true, sortDirection: 'desc' },
+                { key: 'Version', label: 'Version', sortable: true, sortDirection: 'desc' },
+                { key: 'Tag', label: 'Tag', sortable: true, sortDirection: 'desc' }
+            ],
             data:[],
             loaded:false,
             selData:{}
@@ -20,6 +25,9 @@ var app = new Vue({
                 alert("Ein Fehler ist aufgetreten");
             }
         });
+        },
+        select:function (row) {
+            this.selData = row;
         }
     },
     mounted: function () {
@@ -33,5 +41,5 @@ var app = new Vue({
     },
     filters: {
     },
-    el:"#adminvue"
+    el:"#sourcevue"
 });

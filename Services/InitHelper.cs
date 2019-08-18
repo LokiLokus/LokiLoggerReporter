@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using lokiloggerreporter.Models;
 using Newtonsoft.Json;
 
@@ -19,6 +20,7 @@ namespace lokiloggerreporter.Services {
 				Version = "20"
 			};
 			ctx.Sources.Add(source);
+			ctx.SaveChanges();
 		}
 		
 		

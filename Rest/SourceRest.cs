@@ -26,7 +26,8 @@ namespace lokiloggerreporter.Rest {
 		[HttpGet("All")]
 		public ActionResult GetAll()
 		{
-			return Ok(DatabaseContext.Sources);
+			var data = DatabaseContext.Sources.ToList();
+			return Ok(data);
 		}
 
 		[HttpPost("New")]
