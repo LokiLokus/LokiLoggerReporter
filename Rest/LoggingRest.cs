@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using lokiloggerreporter.Models;
+using lokiloggerreporter.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -18,16 +19,47 @@ namespace lokiloggerreporter.Rest {
 			DatabaseCtx = dbCtx;
 		}
 
-		[HttpPost("Log")]
-		public async Task<ActionResult> SaveLog([FromBody] List<Log> logs)
+		[HttpPost("Log/{name}")]
+		public async Task<ActionResult> SaveLog([FromBody]SendedLogModel model)
 		{
 			try
 			{
-				if (logs != null)
+				if (ModelState.IsValid)
 				{
-					DatabaseCtx.AddRange(logs);
-					await DatabaseCtx.SaveChangesAsync();
-					return Ok();
+					Source source = DatabaseCtx.Sources.SingleOrDefault(x => x.SourceId == model.SourceId);
+					if (source == null) return BadRequest("Source not found");
+					if (source.Secret == model.SourceSecret)
+					{
+						if (model.Logs != null)
+						{
+							var dbLogs = model.Logs.Select(d =>
+							new Log{
+								Class = d.Class,
+								Data = d.Data,
+								Line = d.Line,
+								Exception = d.Exception,
+								Message = d.Message,
+								Method = d.Method,
+								Source = source,
+								Time = d.Time,
+								LogLevel = d.LogLevel,
+								LogTyp = d.LogTyp,
+								SourceId = source.SourceId,
+								ThreadId = d.ThreadId
+							});
+							DatabaseCtx.Logs.AddRange(dbLogs);
+							await DatabaseCtx.SaveChangesAsync();
+							return Ok();
+						}
+					}
+					else
+					{
+						return BadRequest("Secret not Correct");
+					}
+				}
+				else
+				{
+					return BadRequest(ModelState);
 				}
 				return BadRequest();
 			}
