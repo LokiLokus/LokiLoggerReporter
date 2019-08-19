@@ -8,7 +8,8 @@ var app = new Vue({
             ],
             data:[],
             loaded:false,
-            selData:{}
+            selData:{},
+            saving:false
         }
     },
     methods: {
@@ -28,6 +29,42 @@ var app = new Vue({
         },
         select:function (row) {
             this.selData = row;
+        },
+        newData: function () {
+            this.selData = {Version:''}
+        },
+        saveData: function () {
+            this.saving = true;
+            if(this.selData.SourceId){
+                axios.put('/api/Source/Update/' + this.selData.SourceId,this.selData)
+                    .then(x => {
+                        this.getData();
+                        this.saving = false;
+                    }).catch(x => {
+                    if (x.response) {
+                        this.errors = x.response.data;
+                    } else {
+                        console.log(x)
+                        alert("Ein Fehler ist aufgetreten");
+                    }
+                    this.saving = false;
+                })
+            }else{
+                    axios.post('/api/Source/New',this.selData)
+                        .then(x => {
+                            this.selData = x.data;
+                            this.getData();
+                            this.saving = false;
+                        }).catch(x => {
+                    if (x.response) {
+                        this.errors = x.response.data;
+                    } else {
+                        console.log(x)
+                        alert("Ein Fehler ist aufgetreten");
+                    }
+                    this.saving = false;
+                })
+            }
         }
     },
     mounted: function () {
@@ -35,7 +72,7 @@ var app = new Vue({
     },
     computed: {
         isEmpty: function () {
-            return isEmpty(this.selData)
+            return  Object.keys(this.selData).length !== 0;
         },
         
     },
