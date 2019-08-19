@@ -7,7 +7,7 @@ var app = new Vue({
     },
     methods: {
         getData: function () {
-            axios.get('/api/Source/All/')
+            axios.get('/api/Source/CurrentStatistic')
                 .then(x => {
                     this.data = x.data;
                     this.loaded = true;

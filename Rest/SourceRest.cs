@@ -7,133 +7,124 @@ using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
 using lokiloggerreporter.ViewModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Adapter.Internal;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace lokiloggerreporter.Rest {
-	[Route("api/Source")]
-	[ApiController]
-	public class SourceRest : Controller {
-		public SourceRest(DatabaseCtx dctx, ISettingsService settingsService)
-		{
-			DatabaseContext = dctx;
-			SettingsService = settingsService;
-		}
+namespace lokiloggerreporter.Rest
+{
+    [Route("api/Source")]
+    [ApiController]
+    public class SourceRest : Controller
+    {
+        public SourceRest(DatabaseCtx dctx, ISettingsService settingsService)
+        {
+            DatabaseContext = dctx;
+            SettingsService = settingsService;
+        }
 
-		public DatabaseCtx DatabaseContext { get; set; }
-		public ISettingsService SettingsService { get; set; }
+        public DatabaseCtx DatabaseContext { get; set; }
+        public ISettingsService SettingsService { get; set; }
 
 
-		[HttpGet("All")]
-		public ActionResult GetAll()
-		{
-			var data = DatabaseContext.Sources.ToList();
-			return Ok(data);
-		}
+        [HttpGet("All")]
+        public ActionResult GetAll()
+        {
+            var data = DatabaseContext.Sources.ToList();
+            return Ok(data);
+        }
 
-		[HttpPost("New")]
-		public async Task<ActionResult> NewSource([FromBody] Source model)
-		{
-			if (ModelState.IsValid)
-			{
-				if (!DatabaseContext.Sources.Any(x =>
-					x.Name == model.Name && x.Version == model.Version && x.Tag == model.Tag))
-				{
-					DatabaseContext.Sources.Add(model);
-					await DatabaseContext.SaveChangesAsync();
-					return Ok(model);
-				}
-				else
-				{
-					return BadRequest(OperationResult.Failed("Name", "Same Source already exists"));
-				}
-			}
-			else
-			{
-				return BadRequest(ModelState);
-			}
-		}
-		
-		[HttpPut("Update/{sourceId}")]
-		public async Task<ActionResult> UpdateSource([FromRoute]string sourceId ,[FromBody] Source model)
-		{
-			if (ModelState.IsValid)
-			{
-				Source source = DatabaseContext.Sources.SingleOrDefault(x => x.SourceId == sourceId);
-				if (source != null)
-				{
-					source.Description = model.Description;
-					source.Name = model.Name;
-					source.Secret = model.Secret;
-					source.Tag = model.Tag;
-					source.Version = model.Version;
-					
-					await DatabaseContext.SaveChangesAsync();
-					return Ok(model);
-				}
-				else
-				{
-					return BadRequest(OperationResult.Failed("Name", "Source doesn't exists"));
-				}
-			}
-			else
-			{
-				return BadRequest(ModelState);
-			}
-		}
+        [HttpPost("New")]
+        public async Task<ActionResult> NewSource([FromBody] Source model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (!DatabaseContext.Sources.Any(x =>
+                    x.Name == model.Name && x.Version == model.Version && x.Tag == model.Tag))
+                {
+                    DatabaseContext.Sources.Add(model);
+                    await DatabaseContext.SaveChangesAsync();
+                    return Ok(model);
+                }
 
-		[HttpGet("LastStatistic")]
-		public ActionResult GetAllSources()
-		{
-			/*
-			var names = DatabaseContext.Logs.DistinctBy(x => x.Name);
-			
-			List<Task> runner = new List<Task>();
-			
-			var data = DatabaseContext.Logs.Where(d =>
-				d.Time >= Time.Now.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime"))).GroupBy(x => x.Name)
-				.Select(x => new
-				{
-					Source = x.Key,
-					Count = x.Sum(f => 1),
-					AllCount = DatabaseContext.Logs.Where(f => f.Name == x.Key).Sum(f => 1),
-					Level = LogLevelExtension.Levels().Select(l =>
-						new
-						{
-							Level = l,
-							Count = x.Where(d => d.LogLevel == l).Sum(f => 1)
-						}
-					).OrderBy(f => f.Level),
-					Typ = LogTypExtension.Typs.Select(z =>
-						new
-						{
-							Typ = z,
-							Count = x.Where(d => d.LogTyp == z).Sum(f => 1)
-						}).OrderBy(f => f.Typ)
-				});
+                return BadRequest(OperationResult.Failed("Name", "Same Source already exists"));
+            }
 
-			var zerodata = names.Where(x => !data.Any(d => d.Source == x.Name)).Select(x => new
-			{
-				Source = x.Name,
-				Count = 0,
-				AllCount = DatabaseContext.Logs.Where(f => f.Name == x.Name).Sum(f => 1),
-				Level = LogLevelExtension.Levels().Select(l =>
-					new
-					{
-						Level = l,
-						Count = 0
-					}
-				).OrderBy(f => f.Level),
-				Typ = LogTypExtension.Typs.Select(z =>
-					new
-					{
-						Typ = z,
-						Count = 0
-					}).OrderBy(f => f.Typ)
-			});
-			var tmp = data.ToList();
-			tmp.AddRange(zerodata);
-			return Ok(tmp);*/
-			throw new NotImplementedException();
-		}
-	}
+            return BadRequest(ModelState);
+        }
+
+        [HttpPut("Update/{sourceId}")]
+        public async Task<ActionResult> UpdateSource([FromRoute] string sourceId, [FromBody] Source model)
+        {
+            if (ModelState.IsValid)
+            {
+                var source = DatabaseContext.Sources.SingleOrDefault(x => x.SourceId == sourceId);
+                if (source != null)
+                {
+                    source.Description = model.Description;
+                    source.Name = model.Name;
+                    source.Secret = model.Secret;
+                    source.Tag = model.Tag;
+                    source.Version = model.Version;
+
+                    await DatabaseContext.SaveChangesAsync();
+                    return Ok(model);
+                }
+
+                return BadRequest(OperationResult.Failed("Name", "Source doesn't exists"));
+            }
+
+            return BadRequest(ModelState);
+        }
+
+        [HttpGet("CurrentStatistic")]
+        public ActionResult CurrentStatistic()
+        {
+            var result = new List<SourceCurrentStatisticModel>();
+            
+            foreach (Source source in DatabaseContext.Sources)
+            {
+                var logs = DatabaseContext.Logs.Where(x =>
+                    x.Time >= DateTime.UtcNow.Add(SettingsService.Get<TimeSpan>("SourceLogCountTime")) &&
+                    x.SourceId == source.SourceId);
+
+                var levels = logs.GroupBy(x => x.LogLevel).Select(x =>
+                    new KeyValuePair<LogLevel, int>(
+                    
+                        x.Key,
+                        x.Sum(d => 1)
+                    )).ToList();
+                
+                LogLevelExtension.Levels().Where(x => !levels.Any(d => d.Key == x)).ToList().ForEach(x =>
+                {
+                    levels.Add(new KeyValuePair<LogLevel, int>(x,0));
+                });
+                
+                var typs = logs.GroupBy(x => x.LogTyp).Select(x =>
+                    new KeyValuePair<LogTyp, int>(
+                    
+                        x.Key,
+                        x.Sum(d => 1)
+                    )).ToList();
+                
+                LogTypExtension.Typs.Where(x => !typs.Any(d => d.Key == x)).ToList().ForEach(x =>
+                {
+                    typs.Add(new KeyValuePair<LogTyp, int>(x,0));
+                });
+                
+                SourceCurrentStatisticModel tmp = new SourceCurrentStatisticModel()
+                {
+                    Source = source,
+                    Count = logs.Sum(x => 1),
+                    AllCount = DatabaseContext.Logs.Where(x => x.SourceId == source.SourceId).Sum(x => 1),
+                    Level = levels.OrderBy(x => x.Key).ToList(),
+                    Typ = typs.OrderBy(x => x.Key).ToList()
+                };
+                result.Add(tmp);
+                
+            }
+
+            return Ok(result);
+        }
+    }
+
+   
 }
