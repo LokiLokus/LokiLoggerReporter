@@ -40,6 +40,11 @@
                     <b-form-group label="Description:">
                         <b-form-textarea v-model="selData.Description" required placeholder="This is the Test System"/>
                     </b-form-group>
+                    
+                    <b-form-group label="Logging URL:">
+                        
+                        <b-form-input readonly value="@Context.Request.Scheme://@Context.Request.Host/api/Logging/Log" type="text" placeholder="1234"/>
+                    </b-form-group>
                 </b-card-body>
                 <b-card-footer>
                     <b-button @@click="saveData()" variant="success">

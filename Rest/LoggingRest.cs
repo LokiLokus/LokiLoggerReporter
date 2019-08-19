@@ -19,7 +19,7 @@ namespace lokiloggerreporter.Rest {
 			DatabaseCtx = dbCtx;
 		}
 
-		[HttpPost("Log/{name}")]
+		[HttpPost("Log/")]
 		public async Task<ActionResult> SaveLog([FromBody]SendedLogModel model)
 		{
 			try
