@@ -24,7 +24,12 @@ namespace lokiloggerreporter.Controllers {
 		{
 			return View("AnalyzeSource");
 		}
-		
+
+		[HttpGet("RestAnalyzer")]
+		public IActionResult RestAnalyzer()
+		{
+			return View("RestAnalyzer");
+		}
 		
 		[HttpGet("AnalyzeSource")]
 		public IActionResult AnalyzeSource()

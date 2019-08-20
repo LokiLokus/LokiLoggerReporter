@@ -9,7 +9,8 @@ var app = new Vue({
             data:[],
             loaded:false,
             selData:{},
-            saving:false
+            saving:false,
+            sourceStr:''
         }
     },
     methods: {
@@ -28,6 +29,7 @@ var app = new Vue({
         });
         },
         select:function (row) {
+            this.sourceStr = location.protocol + "//" + window.location.hostname +':' + window.location.port + '/api/Logging/Log/' + row.SourceId;
             this.selData = row;
         },
         newData: function () {

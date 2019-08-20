@@ -27,7 +27,11 @@ namespace lokiloggerreporter.Models {
 	}
 	public enum LogTyp
 	{
-		Normal,Exception,Return,Invoke
+		Normal,
+		Exception,
+		Return,
+		Invoke,
+		RestCall
 	}
 	public enum LogLevel {
 		Verbose,

@@ -19,14 +19,14 @@ namespace lokiloggerreporter.Rest {
 			DatabaseCtx = dbCtx;
 		}
 
-		[HttpPost("Log/")]
-		public async Task<ActionResult> SaveLog([FromBody]SendedLogModel model)
+		[HttpPost("Log/{sourceId}")]
+		public async Task<ActionResult> SaveLog([FromRoute]string sourceId,[FromBody]SendedLogModel model)
 		{
 			try
 			{
 				if (ModelState.IsValid)
 				{
-					Source source = DatabaseCtx.Sources.SingleOrDefault(x => x.SourceId == model.SourceId);
+					Source source = DatabaseCtx.Sources.SingleOrDefault(x => x.SourceId == sourceId);
 					if (source == null) return BadRequest("Source not found");
 					if (source.Secret == model.SourceSecret)
 					{
@@ -80,16 +80,14 @@ namespace lokiloggerreporter.Rest {
 		[HttpGet("GetLogBySourceDate/{source}/{from}&{to}")]
 		public async Task<ActionResult> GetLogBySource([FromRoute] string source,[FromRoute]DateTime from,[FromRoute] DateTime to)
 		{
-			/*return Ok(DatabaseCtx.Logs.Where(x => x.Time >= from && x.Time <= to)
-				.Where(x => x.Name.ToLower().Contains(source.ToLower())).OrderByDescending(x => x.Time).ToList()); //.ToList());*/
-			throw new NotImplementedException();
+			return Ok(DatabaseCtx.Logs.Where(x => x.Time >= from && x.Time <= to)
+				.Where(x => x.SourceId == source).OrderByDescending(x => x.Time).ToList());
 		}
 		
 		[HttpGet("GetLogBySource/{source}/{offset}-{take}")]
 		public async Task<ActionResult> GetLogBySource([FromRoute] string source,[FromRoute]int offset = 0,[FromRoute] int take = 100)
 		{
-			/*return Ok(DatabaseCtx.Logs.Where(x => x.Name.ToLower().Contains(source.ToLower())).Skip(offset).OrderByDescending(x => x.Time).Take(take).ToList());*/
-			throw new NotImplementedException();
+			return Ok(DatabaseCtx.Logs.Where(x => x.SourceId == source).Skip(offset).OrderByDescending(x => x.Time).Take(take).ToList());
 		}
 	}
 }

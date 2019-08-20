@@ -63,7 +63,7 @@ namespace lokiloggerreporter {
 				app.UseDeveloperExceptionPage();
 				var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
 				InitHelper.CreateSource(ctx);
-				InitHelper.AddLogs(ctx);
+				//InitHelper.AddLogs(ctx);
 				
 				var settingsService= serviceProvider.GetRequiredService<ISettingsService>();
 				
@@ -75,7 +75,6 @@ namespace lokiloggerreporter {
 				app.UseHsts();
 			}
 
-			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 			app.UseCookiePolicy();
 

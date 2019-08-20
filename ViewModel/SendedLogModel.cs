@@ -7,7 +7,6 @@ namespace lokiloggerreporter.ViewModel
 {
     public class SendedLogModel
     {
-        public string SourceId { get; set; }
         public string SourceSecret { get; set; }
         public List<SendedLogs> Logs { get; set; }
         
