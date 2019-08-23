@@ -223,9 +223,9 @@ var app = new Vue({
             //Don|t ask me why this fucking shit can't be used in a normal Method
             shortStr = function (str) {
                 if(!str) str = '';
-                if(str.length > 100){
-                    return str.substring(0,100) + '...';
-                }
+                //if(str.length > 100){
+                //    return str.substring(0,100) + '...';
+                //}
                 return str;
             };
             getTr = function (key,val) {
