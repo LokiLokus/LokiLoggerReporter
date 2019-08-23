@@ -1,7 +1,7 @@
 var app = new Vue({
     data:function(){
-        return{
-            data:[],
+        return {
+            data: [],
             show: true,
             totalRows: 1,
             currentPage: 1,
@@ -15,26 +15,47 @@ var app = new Vue({
             from: new Date(),
             to: new Date(),
             fields: [
-                { key: 'LogLevel', label: 'Lvl', sortable: true, class: 'text-center'},
-                { key: 'LogTyp', label: 'Typ', sortable: true, class: 'text-center'},
-                { key: 'Time', label: 'Time',sortable:true },
-                { key: 'Message', label: 'Nachricht',sortable:true }
+                {key: 'LogLevel', label: 'Lvl', sortable: true, class: 'text-center'},
+                {key: 'LogTyp', label: 'Typ', sortable: true, class: 'text-center'},
+                {key: 'Time', label: 'Time', sortable: true},
+                {key: 'Message', label: 'Nachricht', sortable: true}
             ],
             filter: null,
-            debug:true,
-            info:true,
-            warn:true,
-            error:true,
-            crit:true,
-            norm:true,
-            except:true,
-            retur:true,
-            invoke:true,
-            classFilter:'',
-            after:''
+            debug: true,
+            info: true,
+            warn: true,
+            error: true,
+            crit: true,
+            norm: true,
+            except: true,
+            retur: true,
+            invoke: true,
+            restcall:true,
+            classFilter: '',
+            after: '',
+            sources: [],
+            selSource: 0
         }
     },
     methods: {
+        getAllSources:function(){
+            axios.get('/api/Source/All')
+                .then(x => {
+                    if(x.data.length > 0){
+                        this.selSource = 0;
+                    }
+                    this.sources = x.data;
+                }).catch(x => {
+                if(x.response){
+                    
+                    this.errors = x.response.data;
+                }else{
+                    console.log(x);
+                    alert("Ein Fehler ist aufgetreten");
+                }
+            });
+        },
+        
         getSource: function(){
             var url = window.location.pathname;
             var urls = url.split("/");
@@ -50,17 +71,20 @@ var app = new Vue({
 
         },
         getData: function () {
-            axios.get('/api/Logging/GetLogBySource/' + this.source + '/0-' + this.count)
-                .then(x => {
-                    this.data = x.data;
-                }).catch(x => {
-                if(x.response){
-                    this.errors = x.response.data;
-                }else{
-                    console.log(x);
-                    alert("Ein Fehler ist aufgetreten");
-                }
-            });
+            if(this.sources[this.selSource]){
+                axios.get('/api/Logging/GetLogBySource/' + this.sources[this.selSource].SourceId + '/0-' + this.count)
+                    .then(x => {
+                        this.data = x.data;
+                        console.log(x.data)
+                    }).catch(x => {
+                    if(x.response){
+                        this.errors = x.response.data;
+                    }else{
+                        console.log(x);
+                        alert("Ein Fehler ist aufgetreten");
+                    }
+                });
+            }
         },
         expandAdditionalInfo: function(row){
             row._showDetails = !row._showDetails;
@@ -102,6 +126,7 @@ var app = new Vue({
                 if(xa.LogTyp === 1 && this.except) return true;
                 if(xa.LogTyp === 2 && this.retur) return true;
                 if(xa.LogTyp === 3 && this.invoke) return true;
+                if(xa.LogTyp === 4 && this.restcall) return true;
                 return false;
             });
             if(this.classFilter !== ''){
@@ -117,6 +142,7 @@ var app = new Vue({
         }
     },
     mounted() {
+        this.getAllSources();
         this.after = moment(new Date(),"YYYY-MM-DD HH:mm:ss");
         this.getSource();
         this.getData();
@@ -135,6 +161,7 @@ var app = new Vue({
             if(typ == 1) return "Exception";
             if(typ == 2) return "Return";
             if(typ == 3) return "Invoke";
+            if(typ == 4) return "RestCall";
             return "";
         },
         nBreak:function(br){
@@ -185,6 +212,94 @@ var app = new Vue({
             value.Message = result;
             
             return result.substr(0,100) + "...";
+        },
+        renderDetail:function (item) {
+            var result = "";
+            if(item.LogTyp === 4){
+                console.log(item.Data)
+                var data = JSON.parse(item.Data)[0];
+                result += "<table>";
+                result += "<tbody>";
+                result += "<tr>";
+                result += "<td>";
+                result += "Method";
+                result += "</td>";
+                result += "<td>";
+                result += data.HttpMethod;
+                result += "</td>";
+                result += "</tr>";
+                result += "<tr>";
+                result += "<td>";
+                result += "Path";
+                result += "</td>";
+                result += "<td>";
+                result += data.Scheme + "//" + data.Host + data.Path + data.QueryString;
+                result += "</td>";
+                result += "</tr>";
+
+                result += "<tr>";
+                result += "<td>";
+                result += "StatusCode";
+                result += "</td>";
+                result += "<td>";
+                result += data.StatusCode;
+                result += "</td>";
+                result += "</tr>";
+                result += "<tr>";
+                result += "<td>";
+                result += "Request";
+                result += "</td>";
+                result += "<td>";
+                result += data.RequestBody;
+                result += "</td>";
+                result += "</tr>";
+
+
+                result += "<tr>";
+                result += "<td>";
+                result += "Response";
+                result += "</td>";
+                result += "<td>";
+                result += data.ResponseBody;
+                result += "</td>";
+                result += "</tr>";
+                
+                result += "<tr>";
+                result += "<td>";
+                result += "ClientIp";
+                result += "</td>";
+                result += "<td>";
+                result += data.ClientIp;
+                result += "</td>";
+                result += "</tr>";
+                result += "<tr>";
+                result += "<td>";
+                result += "TraceId";
+                result += "</td>";
+                result += "<td>";
+                result += data.TraceId;
+                result += "</td>";
+                result += "</tr>";
+                result += "<tr>";
+                result += "<td>";
+                result += "Start";
+                result += "</td>";
+                result += "<td>";
+                result += data.Start;
+                result += "</td>";
+                result += "</tr>";
+                result += "<tr>";
+                result += "<td>";
+                result += "End";
+                result += "</td>";
+                result += "<td>";
+                result += data.End;
+                result += "</td>";
+                result += "</tr>";
+                result += "</tbody></table>"
+                
+            }
+            return result;
         }
     },
     el:"#tableAnalyze"

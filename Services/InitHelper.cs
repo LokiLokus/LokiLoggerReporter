@@ -11,85 +11,88 @@ namespace lokiloggerreporter.Services {
 		
 		public static void CreateSource(DatabaseCtx ctx)
 		{
-			Source source = new Source()
-			{
-				Name = "Test",
-				Description = "Test Source",
-				Secret = "1234",
-				Tag = "Tag",
-				Version = "20"
-			};
-			ctx.Sources.Add(source);
-			ctx.SaveChanges();
+			if(!ctx.Sources.Any()){
+				Source source = new Source()
+				{
+					Name = "Test",
+					Description = "Test Source",
+					Secret = "1234",
+					Tag = "Tag",
+					Version = "20"
+				};
+				ctx.Sources.Add(source);
+				ctx.SaveChanges();
+			}
 		}
 		
 		
 		public static void AddLogs(DatabaseCtx ctx)
 		{
 			Source source = ctx.Sources.First();
-			
-			ctx.Logs.Add(new Log()
-			{
-				Class = "asdas",
-				Data = "asdpkdf",
-				LogTyp = LogTyp.Exception,
-				Exception = "Hallo \\n asdsad \\n  sdafgdf",
-				Message = "Du bist hallo",
-				LogLevel = LogLevel.Critical,
-				SourceId = source.SourceId,
-				Time = DateTime.Now.AddDays(-100)
-			});
-			
-			ctx.Logs.Add(new Log()
-			{
-				SourceId = source.SourceId,
-				Class = "asdas",
-				Data = "asdpkdf",
-				LogTyp = LogTyp.Exception,
-				Message = "Du bist hallo",
-				LogLevel = LogLevel.Critical,
-				Time = DateTime.Now.AddDays(-100)
-			});
-			ctx.Logs.Add(new Log()
-			{
-				SourceId = source.SourceId,
-				Class = "asdas",
-				Data = "asdpkdf",
-				LogTyp = LogTyp.Exception,
-				Message = "Du bist hallo",
-				LogLevel = LogLevel.Critical,
-				Time = DateTime.Now
-			});
-			ctx.Logs.Add(new Log()
-			{
-				SourceId = source.SourceId,
-				Class = "sdfgsdfg",
-				Data = "Information",
-				LogTyp = LogTyp.Normal,
-				LogLevel = LogLevel.Information,
-				Time = DateTime.Now
-			});
-			ctx.Logs.Add(new Log()
-			{
-				SourceId = source.SourceId,
-				Class = "sdfgsdfg",
-				Data = "Information",
-				LogTyp = LogTyp.Normal,
-				LogLevel = LogLevel.Information,
-				Time = DateTime.Now
-			});
-			ctx.Logs.Add(new Log()
-			{
-				SourceId = source.SourceId,
-				Class = "sdfgsdfg",
-				Data = "Information",
-				LogTyp = LogTyp.Normal,
-				LogLevel = LogLevel.Information,
-				Time = DateTime.Now
-			});
-			var data = JsonConvert.DeserializeObject<List<Log>>(GetDemoData());
-			ctx.Logs.AddRange(data);
-			ctx.SaveChanges();
+			if(!ctx.Logs.Any()){
+				ctx.Logs.Add(new Log()
+				{
+					Class = "asdas",
+					Data = "asdpkdf",
+					LogTyp = LogTyp.Exception,
+					Exception = "Hallo \\n asdsad \\n  sdafgdf",
+					Message = "Du bist hallo",
+					LogLevel = LogLevel.Critical,
+					SourceId = source.SourceId,
+					Time = DateTime.Now.AddDays(-100)
+				});
+				
+				ctx.Logs.Add(new Log()
+				{
+					SourceId = source.SourceId,
+					Class = "asdas",
+					Data = "asdpkdf",
+					LogTyp = LogTyp.Exception,
+					Message = "Du bist hallo",
+					LogLevel = LogLevel.Critical,
+					Time = DateTime.Now.AddDays(-100)
+				});
+				ctx.Logs.Add(new Log()
+				{
+					SourceId = source.SourceId,
+					Class = "asdas",
+					Data = "asdpkdf",
+					LogTyp = LogTyp.Exception,
+					Message = "Du bist hallo",
+					LogLevel = LogLevel.Critical,
+					Time = DateTime.Now
+				});
+				ctx.Logs.Add(new Log()
+				{
+					SourceId = source.SourceId,
+					Class = "sdfgsdfg",
+					Data = "Information",
+					LogTyp = LogTyp.Normal,
+					LogLevel = LogLevel.Information,
+					Time = DateTime.Now
+				});
+				ctx.Logs.Add(new Log()
+				{
+					SourceId = source.SourceId,
+					Class = "sdfgsdfg",
+					Data = "Information",
+					LogTyp = LogTyp.Normal,
+					LogLevel = LogLevel.Information,
+					Time = DateTime.Now
+				});
+				ctx.Logs.Add(new Log()
+				{
+					SourceId = source.SourceId,
+					Class = "sdfgsdfg",
+					Data = "Information",
+					LogTyp = LogTyp.Normal,
+					LogLevel = LogLevel.Information,
+					Time = DateTime.Now
+				});
+				var data = JsonConvert.DeserializeObject<List<Log>>(GetDemoData());
+				ctx.Logs.AddRange(data);
+				ctx.SaveChanges();
+			}
 		}
 
 		public static void SetSettings(ISettingsService settingsService)
