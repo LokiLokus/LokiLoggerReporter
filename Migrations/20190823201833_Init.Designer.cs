@@ -9,14 +9,15 @@ using lokiloggerreporter.Models;
 namespace lokiloggerreporter.Migrations
 {
     [DbContext(typeof(DatabaseCtx))]
-    [Migration("20190822200631_Init")]
+    [Migration("20190823201833_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.8-servicing-32085");
+                .HasAnnotation("ProductVersion", "2.1.8-servicing-32085")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("lokiloggerreporter.Models.Log", b =>
                 {

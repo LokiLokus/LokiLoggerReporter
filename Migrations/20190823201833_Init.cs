@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace lokiloggerreporter.Migrations
@@ -28,7 +29,7 @@ namespace lokiloggerreporter.Migrations
                 columns: table => new
                 {
                     ID = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ThreadId = table.Column<int>(nullable: false),
                     Time = table.Column<DateTime>(nullable: false),
                     LogLevel = table.Column<int>(nullable: false),
