@@ -39,7 +39,12 @@ var app = new Vue({
     },
     methods: {
 
-
+        rowClass(item, type) {
+            if (!item) return
+            if (item.LogLevel === 3) return 'warnRow';
+            if (item.LogLevel === 4) return 'errRow';
+            if (item.LogLevel === 5) return 'critRow';
+        },
         getAllSources:function(){
             axios.get('/api/Source/All')
                 .then(x => {
@@ -217,6 +222,7 @@ var app = new Vue({
         renderDetail:function (item) {
             //Don|t ask me why this fucking shit can't be used in a normal Method
             shortStr = function (str) {
+                if(!str) str = '';
                 if(str.length > 100){
                     return str.substring(0,100) + '...';
                 }
@@ -226,15 +232,13 @@ var app = new Vue({
                 return "<tr><td>" + key + "</td><td>" + val + "</td></tr>"; 
             };
             
-            
-            
             var result = "";
             
-            console.log(this.shortStr)
             if(item.LogTyp === 4){
                 var data = JSON.parse(item.Data)[0];
                 result += "<table>";
                 result += "<tbody>";
+                result += getTr("Location",data.Class + '.' + row.item.method + ':' + row.item.Line);
                 result += getTr("Method",data.HttpMethod);
                 result += getTr("Path",data.Scheme + "//" + data.Host + data.Path + data.QueryString);
                 result += getTr("Status Code",data.StatusCode);
@@ -245,7 +249,7 @@ var app = new Vue({
                 result += getTr("Trace Id",data.TraceId);
                 result += getTr("Start",data.Start);
                 result += getTr("End",data.End);
-                result += getTr("Executen Time",(new Date(data.End)).getTime() -  (new Date(data.Start)).getTime());
+                result += getTr("Executen Time",(new Date(data.End)).getTime() -  (new Date(data.Start)).getTime() + " Milli Seconds");
                 result += "</tbody></table>"
                 
             }
