@@ -38,16 +38,18 @@ var app = new Vue({
         }
     },
     methods: {
+
+
         getAllSources:function(){
             axios.get('/api/Source/All')
                 .then(x => {
+                    this.sources = x.data;
                     if(x.data.length > 0){
                         this.selSource = 0;
+                        this.getData();
                     }
-                    this.sources = x.data;
                 }).catch(x => {
                 if(x.response){
-                    
                     this.errors = x.response.data;
                 }else{
                     console.log(x);
@@ -55,7 +57,6 @@ var app = new Vue({
                 }
             });
         },
-        
         getSource: function(){
             var url = window.location.pathname;
             var urls = url.split("/");
@@ -68,14 +69,12 @@ var app = new Vue({
                     }
                 }
             }
-
         },
         getData: function () {
             if(this.sources[this.selSource]){
                 axios.get('/api/Logging/GetLogBySource/' + this.sources[this.selSource].SourceId + '/0-' + this.count)
                     .then(x => {
                         this.data = x.data;
-                        console.log(x.data)
                     }).catch(x => {
                     if(x.response){
                         this.errors = x.response.data;
@@ -213,89 +212,40 @@ var app = new Vue({
             
             return result.substr(0,100) + "...";
         },
+
+        
         renderDetail:function (item) {
+            //Don|t ask me why this fucking shit can't be used in a normal Method
+            shortStr = function (str) {
+                if(str.length > 100){
+                    return str.substring(0,100) + '...';
+                }
+                return str;
+            };
+            getTr = function (key,val) {
+                return "<tr><td>" + key + "</td><td>" + val + "</td></tr>"; 
+            };
+            
+            
+            
             var result = "";
+            
+            console.log(this.shortStr)
             if(item.LogTyp === 4){
-                console.log(item.Data)
                 var data = JSON.parse(item.Data)[0];
                 result += "<table>";
                 result += "<tbody>";
-                result += "<tr>";
-                result += "<td>";
-                result += "Method";
-                result += "</td>";
-                result += "<td>";
-                result += data.HttpMethod;
-                result += "</td>";
-                result += "</tr>";
-                result += "<tr>";
-                result += "<td>";
-                result += "Path";
-                result += "</td>";
-                result += "<td>";
-                result += data.Scheme + "//" + data.Host + data.Path + data.QueryString;
-                result += "</td>";
-                result += "</tr>";
-
-                result += "<tr>";
-                result += "<td>";
-                result += "StatusCode";
-                result += "</td>";
-                result += "<td>";
-                result += data.StatusCode;
-                result += "</td>";
-                result += "</tr>";
-                result += "<tr>";
-                result += "<td>";
-                result += "Request";
-                result += "</td>";
-                result += "<td>";
-                result += data.RequestBody;
-                result += "</td>";
-                result += "</tr>";
-
-
-                result += "<tr>";
-                result += "<td>";
-                result += "Response";
-                result += "</td>";
-                result += "<td>";
-                result += data.ResponseBody;
-                result += "</td>";
-                result += "</tr>";
-                
-                result += "<tr>";
-                result += "<td>";
-                result += "ClientIp";
-                result += "</td>";
-                result += "<td>";
-                result += data.ClientIp;
-                result += "</td>";
-                result += "</tr>";
-                result += "<tr>";
-                result += "<td>";
-                result += "TraceId";
-                result += "</td>";
-                result += "<td>";
-                result += data.TraceId;
-                result += "</td>";
-                result += "</tr>";
-                result += "<tr>";
-                result += "<td>";
-                result += "Start";
-                result += "</td>";
-                result += "<td>";
-                result += data.Start;
-                result += "</td>";
-                result += "</tr>";
-                result += "<tr>";
-                result += "<td>";
-                result += "End";
-                result += "</td>";
-                result += "<td>";
-                result += data.End;
-                result += "</td>";
-                result += "</tr>";
+                result += getTr("Method",data.HttpMethod);
+                result += getTr("Path",data.Scheme + "//" + data.Host + data.Path + data.QueryString);
+                result += getTr("Status Code",data.StatusCode);
+                result += getTr("Request",shortStr(data.RequestBody));
+                result += getTr("Exception",shortStr(data.Exception));
+                result += getTr("Response",shortStr(data.ResponseBody.replace(/</g,'&lt;').replace(/>/g,'&gt;')));
+                result += getTr("Client Ip",data.ClientIp);
+                result += getTr("Trace Id",data.TraceId);
+                result += getTr("Start",data.Start);
+                result += getTr("End",data.End);
+                result += getTr("Executen Time",(new Date(data.End)).getTime() -  (new Date(data.Start)).getTime());
                 result += "</tbody></table>"
                 
             }

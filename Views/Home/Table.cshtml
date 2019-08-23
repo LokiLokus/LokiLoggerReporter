@@ -81,7 +81,7 @@
                         <i class="fas fa-play"></i> Invoke
                     </b-form-checkbox>
                     <b-form-checkbox class="mb-3" v-model="restcall">
-                        <i class="fas fa-<i class="fas fa-bullhorn"></i>"></i> RestCall
+                        <i class="fas fa-bullhorn"></i> RestCall
                     </b-form-checkbox>
                 </b-dropdown-form>
             </b-dropdown>
@@ -124,7 +124,7 @@
                 {{row.item | message }}
             </template>
 
-            <template slot="row-details" slot-scope="row">
+            <template slot="row-details" slot-scope="row" v-class="{}"/>
                 <b-card>
                     <ul style="list-style-type: none;">
                         <li>{{row.item.Time}}</li>
@@ -139,15 +139,11 @@
                         <li v-if="row.item.LogTyp == 1" :inner-html.prop="row.item.Exception | nBreak"></li>
                         <!--<li>{{row.item.Data}}</li>-->
                         <div :inner-html.prop="row.item | renderDetail">
-                            
                         </div>
-                        <!--<li v-for="(value, key) in row.item" :key="key" v-if="key != '_showDetails' &&  value && ( key != 'Data' || key == 'Data' && value != '[]')">{{ key }}: {{ value }}</li>-->
                     </ul>
                 </b-card>
-            </template>
+            
         </b-table>
-
-
         <b-row>
             <b-col md="6" class="my-1">
                 <b-pagination
