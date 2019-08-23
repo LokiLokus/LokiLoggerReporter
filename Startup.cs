@@ -83,12 +83,6 @@ namespace lokiloggerreporter {
 				app.UseExceptionHandler("/Home/Error");
 				app.UseHsts();
 			}
-			app.UseLokiLogger(x =>
-			{
-				x.Secret = "1234";
-				x.HostName = "http://localhost:5000/api/Logging/Log/b7bc5775-116d-4bba-ac7a-54e3aceac6ac";
-				x.DefaultLevel = LogLevel.Debug;
-			});
 			app.UseSwagger();
 			app.UseSwaggerUI(c =>
 			{
