@@ -7,15 +7,19 @@
             <b-col md="3" class="my-1">
                 <b-form-group label-cols-sm="3" label="Source" class="mb-0">
                     <b-input-group>
-                        <b-form-input v-model="source" placeholder="Source"></b-form-input>
+                        <b-form-select :options="sources" v-model="selSource">
+                            <option v-for="(selectOption, indexOpt) in sources"
+                                    :key="selectOption"
+                                    :value="indexOpt">
+                                {{ selectOption.Name }} - {{ selectOption.Tag }} / {{selectOption.Version}}
+                            </option>
+                        </b-form-select>
                         <b-input-group-append>
                             <b-button variant="primary" @@click="getData">Get</b-button>
                         </b-input-group-append>
                     </b-input-group>
                 </b-form-group>
             </b-col>
-
-
             <b-col md="3" class="my-1">
                 <b-form-group label-cols-sm="3" label="Filter" class="mb-0">
                     <b-input-group>
@@ -76,6 +80,9 @@
                     <b-form-checkbox class="mb-3" v-model="invoke">
                         <i class="fas fa-play"></i> Invoke
                     </b-form-checkbox>
+                    <b-form-checkbox class="mb-3" v-model="restcall">
+                        <i class="fas fa-bullhorn"></i> RestCall
+                    </b-form-checkbox>
                 </b-dropdown-form>
             </b-dropdown>
         </b-row>
@@ -92,7 +99,9 @@
             :per-page="perPage"
             :filter="filter"
             @@filtered="onFiltered"
-            @@row-clicked="expandAdditionalInfo">
+            @@row-clicked="expandAdditionalInfo"
+            :tbody-tr-class="rowClass"
+            >
             <template slot="LogLevel" slot-scope="row">
                 <i v-if="row.item.LogLevel == 0 || row.item.LogLevel == 1" class="fas fa-bug"></i>
                 <i v-if="row.item.LogLevel == 2" class="fas fa-info"></i>
@@ -106,6 +115,7 @@
                 <i v-if="row.item.LogTyp == 1" class="fas fa-exclamation"></i>
                 <i v-if="row.item.LogTyp == 2" class="fas fa-undo"></i>
                 <i v-if="row.item.LogTyp == 3" class="fas fa-play"></i>
+                <i v-if="row.item.LogTyp == 4" class="fas fa-bullhorn"></i>
             </template>
 
             <template slot="Time" slot-scope="row">
@@ -123,18 +133,18 @@
                         <li>
                             <span style="font-weight:bolder">{{row.item.LogLevel | level}} - {{row.item.LogTyp | typ}}</span> - {{row.item.ID}}
                         </li>
-                        <li>{{row.item.Class}}.{{row.item.Method}}:<span v-if="row.item.Line > 0">{{row.item.Line}}</span></li>
                         <li>{{row.item | message}}</li>
-                        <li v-if="row.item.LogTyp == 1"><h6>Exception</h6></li>
+                        <li v-if="row.item.LogTyp == 1">
+                            <h6>Exception</h6>
+                        </li>
                         <li v-if="row.item.LogTyp == 1" :inner-html.prop="row.item.Exception | nBreak"></li>
-                        <li>{{row.item.Data}}</li>
-                        <!--<li v-for="(value, key) in row.item" :key="key" v-if="key != '_showDetails' &&  value && ( key != 'Data' || key == 'Data' && value != '[]')">{{ key }}: {{ value }}</li>-->
+                        <div :inner-html.prop="row.item | renderDetail">
+                            
+                        </div>
                     </ul>
                 </b-card>
             </template>
         </b-table>
-
-
         <b-row>
             <b-col md="6" class="my-1">
                 <b-pagination
@@ -153,6 +163,17 @@
         </b-col>
     </b-container>
 </div>
+<style>
+    .warnRow{
+        background: rgba(255,128,54,0.5) !important;
+    }
+    .errRow{
+        background: rgba(255,59,25,0.86) !important;
+    }
+    .critRow{
+        background: rgba(255,0,0,0.9) !important;
+    }
+</style>
 
 
 @section Scripts{

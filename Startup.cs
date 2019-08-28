@@ -15,6 +15,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Swagger;
+
 
 namespace lokiloggerreporter {
 	public class Startup {
@@ -37,7 +39,9 @@ namespace lokiloggerreporter {
 			}else if (databaseSettings.DatabaseTyp.ToLower() == "mysql")
 			{
 				services.AddDbContext<DatabaseCtx>(opt => opt.UseMySql(databaseSettings.ConnectionString));
-
+			}else if (databaseSettings.DatabaseTyp.ToLower() == "sqlite")
+			{
+				services.AddDbContext<DatabaseCtx>(opt => opt.UseSqlite(databaseSettings.ConnectionString));
 			}
 			
 			
@@ -53,6 +57,11 @@ namespace lokiloggerreporter {
  
 			services.AddGraphQL(o => { o.ExposeExceptions = true; })
 				.AddGraphTypes(ServiceLifetime.Scoped);
+
+			services.AddSwaggerGen(c =>
+			{
+				c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+			});
 			
 			services.AddMvc().AddJsonOptions(options =>
 			{
@@ -83,6 +92,11 @@ namespace lokiloggerreporter {
 				app.UseExceptionHandler("/Home/Error");
 				app.UseHsts();
 			}
+			app.UseSwagger();
+			app.UseSwaggerUI(c =>
+			{
+				c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+			});
 
 			app.UseStaticFiles();
 			app.UseCookiePolicy();

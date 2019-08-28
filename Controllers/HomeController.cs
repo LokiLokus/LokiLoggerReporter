@@ -14,6 +14,7 @@ namespace lokiloggerreporter.Controllers {
 		{
 			DatabaseCtx = databaseCtx;
 		}
+		[HttpGet("")]
 		public IActionResult Index()
 		{
 			return View();
