@@ -1,5 +1,9 @@
 ﻿using System;
+using GraphQL;
+using GraphQL.Server;
+using GraphQL.Server.Ui.Playground;
 using lokiloggerreporter.Config;
+using lokiloggerreporter.GraphQL;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
 using Microsoft.AspNetCore.Builder;
@@ -44,7 +48,12 @@ namespace lokiloggerreporter {
 				options.MinimumSameSitePolicy = SameSiteMode.None;
 			});
 
-
+			services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
+			services.AddScoped<AppSchema>();
+ 
+			services.AddGraphQL(o => { o.ExposeExceptions = true; })
+				.AddGraphTypes(ServiceLifetime.Scoped);
+			
 			services.AddMvc().AddJsonOptions(options =>
 			{
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver();
@@ -62,7 +71,7 @@ namespace lokiloggerreporter {
 			{
 				app.UseDeveloperExceptionPage();
 				var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
-				InitHelper.CreateSource(ctx);
+				//InitHelper.CreateSource(ctx);
 				//InitHelper.AddLogs(ctx);
 				
 				var settingsService= serviceProvider.GetRequiredService<ISettingsService>();
@@ -77,7 +86,9 @@ namespace lokiloggerreporter {
 
 			app.UseStaticFiles();
 			app.UseCookiePolicy();
-
+			app.UseGraphQL<AppSchema>();
+			
+			app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());  
 			app.UseMvc(routes =>
 			{
 				routes.MapRoute(
