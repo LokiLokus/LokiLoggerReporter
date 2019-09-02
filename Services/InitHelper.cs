@@ -98,6 +98,7 @@ namespace lokiloggerreporter.Services {
 		public static void SetSettings(ISettingsService settingsService)
 		{
 			settingsService.Set("SourceLogCountTime",TimeSpan.FromDays(-1));
+			settingsService.Set("MaxResultCount",100);
 			
 		}
 

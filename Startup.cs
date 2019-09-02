@@ -1,8 +1,10 @@
 ﻿using System;
 using GraphQL;
 using GraphQL.Server;
+using GraphQL.Server.Internal;
 using GraphQL.Server.Ui.Playground;
 using lokiloggerreporter.Config;
+using lokiloggerreporter.Extensions;
 using lokiloggerreporter.GraphQL;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
@@ -70,6 +72,7 @@ namespace lokiloggerreporter {
 			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 			services.AddSingleton<ISettingsService, SettingService>();
+			services.AddTransient(typeof(IGraphQLExecuter<>), typeof(MyDefaultGraphQLExecuter<>));
 
 		}
 

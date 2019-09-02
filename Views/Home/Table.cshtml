@@ -91,13 +91,12 @@
         <b-table
             show-empty
             stacked="md"
-            :items="filterd"
+            :items="data"
             :fields="fields"
             :current-page="currentPage"
             :small="true"
             :striped="true"
             :per-page="perPage"
-            :filter="filter"
             @@filtered="onFiltered"
             @@row-clicked="expandAdditionalInfo"
             :tbody-tr-class="rowClass"

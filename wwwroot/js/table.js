@@ -77,13 +77,55 @@ var app = new Vue({
         },
         getData: function () {
             if(this.sources[this.selSource]){
-                var query = '/graphql?query=query%20LogQuery{logs(logTyp:4,logLevel:1,sourceId:"' + this.sources[this.selSource].SourceId 
-                    + '"){logLevel  logTyp class iD threadId time message class method line exception data sourceId}}'
-                console.log(query)
-                axios.get(query)
+                axios.post('/graphql',{
+                    query: 'query LogQuery{\n' +
+                        '  logs(sourceId:"' + this.sources[this.selSource].SourceId + '",\n' +
+                        '    normal:' + this.norm +',\n' +
+                        '    return:' + this.retur +',\n' +
+                        '    invoke:' + this.invoke +',\n' +
+                        '    exception:' + this.except +',\n' +
+                        '    restCall:' + this.restcall +',\n' +
+                        '    debug:' + this.debug +',\n' +
+                        '    information:' + this.info + ',\n' +
+                        '    warning:' + this.warn + ',\n' +
+                        '    error:' + this.error + ',\n' +
+                        '    critical:' + this.crit + '){\n' +
+                        '    logLevel\n' +
+                        '    logTyp\n' +
+                        '    class\n' +
+                        '    iD\n' +
+                        '    threadId\n' +
+                        '    time\n' +
+                        '    message\n' +
+                        '    class\n' +
+                        '    method\n' +
+                        '    line\n' +
+                        '    exception\n' +
+                        '    data\n' +
+                        '    sourceId\n' +
+                        '  }\n' +
+                        '}'
+                })
                     .then(x => {
-                        console.log(x.data.data.logs);
-                        this.data = x.data.data.logs;
+                        this.data = []
+                        //Yeah GraphQL have not usable Option for changing Cases
+                        for (let i = 0; i < x.data.data.logs.length; i++) {
+                            this.data.push({
+                                LogLevel: x.data.data.logs[i].logLevel,
+                                LogTyp: x.data.data.logs[i].logTyp,
+                                ID: x.data.data.logs[i].iD,
+                                ThreadId: x.data.data.logs[i].threadId,
+                                Time: x.data.data.logs[i].time,
+                                Class: x.data.data.logs[i].class,
+                                Message: x.data.data.logs[i].message,
+                                Method: x.data.data.logs[i].method,
+                                Line: x.data.data.logs[i].line,
+                                Exception: x.data.data.logs[i].exception,
+                                Data: x.data.data.logs[i].data,
+                                SourceId: x.data.data.logs[i].sourceId
+                            })
+                        }
+                        console.log(this.data);
                     }).catch(x => {
                     if(x.response){
                         this.errors = x.response.data;
@@ -110,36 +152,6 @@ var app = new Vue({
                 .map(f => {
                     return { text: f.label, value: f.key }
                 })
-        },
-        filterd: function () {
-            var result = this.data;
-            result = result.filter(xa =>{
-                if((xa.LogLevel === 0 || xa.LogLevel === 1)&& this.debug) return true;
-                if(xa.LogLevel === 2 && this.info) return true;
-                if(xa.LogLevel === 3 && this.warn) return true;
-                if(xa.LogLevel === 4 && this.error) return true;
-                if(xa.LogLevel === 5 && this.crit) return true;
-                return false;
-            });
-            
-            result = result.filter(xa => {
-                if(xa.LogTyp === 0 && this.norm) return true;
-                if(xa.LogTyp === 1 && this.except) return true;
-                if(xa.LogTyp === 2 && this.retur) return true;
-                if(xa.LogTyp === 3 && this.invoke) return true;
-                if(xa.LogTyp === 4 && this.restcall) return true;
-                return false;
-            });
-            if(this.classFilter !== ''){
-                result = result.filter (xa =>{
-                    if(xa.Class && xa.Class.toLowerCase().indexOf(this.classFilter.toLowerCase()) !== -1) return true;
-                    if(xa.Method && xa.Method.toLowerCase().indexOf(this.classFilter.toLowerCase()) !== -1) return true;
-                    return false;
-                });
-            }
-            
-            this.totalRows = result.length;
-            return result;
         }
     },
     mounted() {
@@ -235,7 +247,7 @@ var app = new Vue({
                 var data = JSON.parse(item.Data)[0];
                 result += "<table>";
                 result += "<tbody>";
-                result += getTr("Location",data.Class + '.' + data.method + ':' + data.Line);
+                result += getTr("Location",item.Class + '.' + item.Method + ':' + item.Line);
                 result += getTr("Method",data.HttpMethod);
                 result += getTr("Path",data.Scheme + "//" + data.Host + data.Path + data.QueryString);
                 result += getTr("Status Code",data.StatusCode);
@@ -247,6 +259,7 @@ var app = new Vue({
                 result += getTr("Start",data.Start);
                 result += getTr("End",data.End);
                 result += getTr("Executen Time",(new Date(data.End)).getTime() -  (new Date(data.Start)).getTime() + " Milli Seconds");
+                result += getTr("Thread Id",data.ThreadId);
                 result += "</tbody></table>"
                 
             }

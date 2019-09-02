@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GraphQL.Types;
 using lokiloggerreporter.Models;
+using lokiloggerreporter.Services;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -30,7 +32,7 @@ namespace lokiloggerreporter.GraphQL {
 	}
 
 	public class LogQuery : ObjectGraphType {
-		public LogQuery(DatabaseCtx database)
+		public LogQuery(DatabaseCtx database,ISettingsService settingsService)
 		{
 			Field<ListGraphType<LogType>>(
 				"logs",
@@ -69,21 +71,23 @@ namespace lokiloggerreporter.GraphQL {
 
 					string sourceId = context.GetArgument<string>("sourceId");
 
-					DbSet<Log> start = database.Logs;
-
-					return start.Where(x => x.SourceId == sourceId &&
+					
+					return database.Logs.Where(x => x.SourceId == sourceId &&
 					                        (debug && x.LogLevel == LogLevel.Debug ||
 					                         debug && x.LogLevel == LogLevel.Verbose ||
 					                         info && x.LogLevel == LogLevel.Information ||
 					                         warn && x.LogLevel == LogLevel.Warning ||
 					                         error && x.LogLevel == LogLevel.Critical ||
-					                         critical && x.LogLevel == LogLevel.SystemCritical) &&
+					                         critical && x.LogLevel == LogLevel.SystemCritical)
+					                        &&
 					                        (normal && x.LogTyp == LogTyp.Normal ||
 					                         exception && x.LogTyp == LogTyp.Exception ||
 					                         ret && x.LogTyp == LogTyp.Return ||
 					                         invoke && x.LogTyp == LogTyp.Invoke ||
 					                         restCall && x.LogTyp == LogTyp.RestCall)
-					).Where(x =>
+					                         &&
+					                         x.Time >= DateTime.UtcNow.AddDays(-10)
+					).Take(settingsService.Get<int>("MaxResultCount")).Where(x =>
 						(string.IsNullOrWhiteSpace(included) ||
 						 JsonConvert.SerializeObject(x).Contains(included)) &&
 						(string.IsNullOrWhiteSpace(excluded) ||
