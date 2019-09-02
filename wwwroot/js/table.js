@@ -77,34 +77,36 @@ var app = new Vue({
         },
         getData: function () {
             if(this.sources[this.selSource]){
+                var query = 'query LogQuery{\n' +
+                    '  logs(sourceId:"' + this.sources[this.selSource].SourceId + '",\n' +
+                    '    normal:' + this.norm +',\n' +
+                    '    return:' + this.retur +',\n' +
+                    '    invoke:' + this.invoke +',\n' +
+                    '    exception:' + this.except +',\n' +
+                    '    restCall:' + this.restcall +',\n' +
+                    '    debug:' + this.debug +',\n' +
+                    '    information:' + this.info + ',\n' +
+                    '    warning:' + this.warn + ',\n' +
+                    '    error:' + this.error + ',\n' +
+                    '    critical:' + this.crit + '){\n' +
+                    '    logLevel\n' +
+                    '    logTyp\n' +
+                    '    class\n' +
+                    '    iD\n' +
+                    '    threadId\n' +
+                    '    time\n' +
+                    '    message\n' +
+                    '    class\n' +
+                    '    method\n' +
+                    '    line\n' +
+                    '    exception\n' +
+                    '    data\n' +
+                    '    sourceId\n' +
+                    '  }\n' +
+                    '}';
+                console.log(query)
                 axios.post('/graphql',{
-                    query: 'query LogQuery{\n' +
-                        '  logs(sourceId:"' + this.sources[this.selSource].SourceId + '",\n' +
-                        '    normal:' + this.norm +',\n' +
-                        '    return:' + this.retur +',\n' +
-                        '    invoke:' + this.invoke +',\n' +
-                        '    exception:' + this.except +',\n' +
-                        '    restCall:' + this.restcall +',\n' +
-                        '    debug:' + this.debug +',\n' +
-                        '    information:' + this.info + ',\n' +
-                        '    warning:' + this.warn + ',\n' +
-                        '    error:' + this.error + ',\n' +
-                        '    critical:' + this.crit + '){\n' +
-                        '    logLevel\n' +
-                        '    logTyp\n' +
-                        '    class\n' +
-                        '    iD\n' +
-                        '    threadId\n' +
-                        '    time\n' +
-                        '    message\n' +
-                        '    class\n' +
-                        '    method\n' +
-                        '    line\n' +
-                        '    exception\n' +
-                        '    data\n' +
-                        '    sourceId\n' +
-                        '  }\n' +
-                        '}'
+                    query: query
                 })
                     .then(x => {
                         this.data = [];
