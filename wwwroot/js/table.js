@@ -108,7 +108,7 @@ var app = new Vue({
                 })
                     .then(x => {
                         this.data = [];
-                        console.log(this.data);
+                        console.log(x.data);
 
                         //Yeah GraphQL have not usable Option for changing Cases
                         for (let i = 0; i < x.data.data.logs.length; i++) {
