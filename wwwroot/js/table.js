@@ -107,7 +107,9 @@ var app = new Vue({
                         '}'
                 })
                     .then(x => {
-                        this.data = []
+                        this.data = [];
+                        console.log(this.data);
+
                         //Yeah GraphQL have not usable Option for changing Cases
                         for (let i = 0; i < x.data.data.logs.length; i++) {
                             this.data.push({
@@ -125,7 +127,6 @@ var app = new Vue({
                                 SourceId: x.data.data.logs[i].sourceId
                             })
                         }
-                        console.log(this.data);
                     }).catch(x => {
                     if(x.response){
                         this.errors = x.response.data;

@@ -72,7 +72,6 @@ namespace lokiloggerreporter {
 			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 			services.AddSingleton<ISettingsService, SettingService>();
-			services.AddTransient(typeof(IGraphQLExecuter<>), typeof(MyDefaultGraphQLExecuter<>));
 
 		}
 
