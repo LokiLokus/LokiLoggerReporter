@@ -6,7 +6,7 @@
         <b-spinner variant="primary" style="width: 10rem; height: 10rem;" label="Waitin"></b-spinner>
     </div>
     <div class="row">
-        <dashboard-card v-for="x in data" :color="getState(x)" :count="x.AllCount" :link="'/Table/' + x.Source.Name" :message="x.Source.Name"></dashboard-card>
+        <dashboard-card v-for="x in data" :color="getState(x)" :count="x.AllCount" :link="'/Table/' + x.Source.SourceId" :message="x.Source.Name"></dashboard-card>
     </div>
 </div>
 

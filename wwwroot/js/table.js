@@ -40,7 +40,7 @@ var app = new Vue({
     methods: {
 
         rowClass(item, type) {
-            if (!item) return
+            if (!item) return;
             if (item.LogLevel === 3) return 'warnRow';
             if (item.LogLevel === 4) return 'errRow';
             if (item.LogLevel === 5) return 'critRow';
@@ -77,9 +77,13 @@ var app = new Vue({
         },
         getData: function () {
             if(this.sources[this.selSource]){
-                axios.get('/api/Logging/GetLogBySource/' + this.sources[this.selSource].SourceId + '/0-' + this.count)
+                var query = '/graphql?query=query%20LogQuery{logs(logTyp:4,logLevel:1,sourceId:"' + this.sources[this.selSource].SourceId 
+                    + '"){logLevel  logTyp class iD threadId time message class method line exception data sourceId}}'
+                console.log(query)
+                axios.get(query)
                     .then(x => {
-                        this.data = x.data;
+                        console.log(x.data.data.logs);
+                        this.data = x.data.data.logs;
                     }).catch(x => {
                     if(x.response){
                         this.errors = x.response.data;
@@ -108,14 +112,7 @@ var app = new Vue({
                 })
         },
         filterd: function () {
-            var result = this.data;// moment(this.after,"YYYY-MM-DD HH:mm:ss");
-            /*
-            result = result.filter(x => {
-                
-                if(x.Time >= this.after) return true;
-                return false;
-            });
-            */
+            var result = this.data;
             result = result.filter(xa =>{
                 if((xa.LogLevel === 0 || xa.LogLevel === 1)&& this.debug) return true;
                 if(xa.LogLevel === 2 && this.info) return true;
