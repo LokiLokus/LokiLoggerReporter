@@ -87,7 +87,7 @@ namespace lokiloggerreporter.GraphQL {
 					                         restCall && x.LogTyp == LogTyp.RestCall)
 					                         &&
 					                         x.Time >= DateTime.UtcNow.AddDays(-10)
-					).Take(settingsService.Get<int>("MaxResultCount")).OrderByDescending(x => x.Time).Where(x =>
+					).Take(settingsService.Get<int>("MaxResultCount")).OrderBy(x => x.Time).Where(x =>
 						(string.IsNullOrWhiteSpace(included) ||
 						 JsonConvert.SerializeObject(x).Contains(included)) &&
 						(string.IsNullOrWhiteSpace(excluded) ||
