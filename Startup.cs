@@ -85,15 +85,16 @@ namespace lokiloggerreporter {
 				//InitHelper.CreateSource(ctx);
 				//InitHelper.AddLogs(ctx);
 				
-				var settingsService= serviceProvider.GetRequiredService<ISettingsService>();
 				
-				InitHelper.SetSettings(settingsService);
 			}
 			else
 			{
 				app.UseExceptionHandler("/Home/Error");
 				app.UseHsts();
 			}
+			var settingsService= serviceProvider.GetRequiredService<ISettingsService>();
+			InitHelper.SetSettings(settingsService);
+
 			app.UseSwagger();
 			app.UseSwaggerUI(c =>
 			{
