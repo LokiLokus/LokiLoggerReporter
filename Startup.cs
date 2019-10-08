@@ -6,6 +6,7 @@ using GraphQL.Server.Ui.Playground;
 using lokiloggerreporter.Config;
 using lokiloggerreporter.Extensions;
 using lokiloggerreporter.GraphQL;
+using lokiloggerreporter.Hubs;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
 using Microsoft.AspNetCore.Builder;
@@ -72,7 +73,7 @@ namespace lokiloggerreporter {
 			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 			services.AddSingleton<ISettingsService, SettingService>();
-
+			services.AddSignalR();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,7 +82,7 @@ namespace lokiloggerreporter {
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
+				
 				//InitHelper.CreateSource(ctx);
 				//InitHelper.AddLogs(ctx);
 				
@@ -101,6 +102,10 @@ namespace lokiloggerreporter {
 				c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
 			});
 
+			app.UseSignalR(x =>
+			{
+				x.MapHub<AnalyzeHub>("/Analyze");
+			});
 			app.UseStaticFiles();
 			app.UseCookiePolicy();
 			app.UseGraphQL<AppSchema>();
@@ -112,9 +117,10 @@ namespace lokiloggerreporter {
 					"default",
 					"{controller=Home}/{action=Index}/{id?}");
 			});
-			
-			
-			
+			var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
+			InitHelper.UpdateDatabaseCtx(ctx);
+
+
 		}
 		
 		private T GetSettings<T>(string section)

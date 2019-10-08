@@ -8,7 +8,24 @@ using Newtonsoft.Json;
 namespace lokiloggerreporter.Services {
 	public static class InitHelper {
 
-		
+		public static void UpdateDatabaseCtx(DatabaseCtx ctx)
+		{
+			foreach (var log in ctx.Logs.Where(x => x.LogTyp == LogTyp.RestCall))
+			{
+				try
+				{
+					WebRequest request = JsonConvert.DeserializeObject<WebRequest>(log.Data);
+					log.WebRequest = request;
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+				}
+			}
+
+			ctx.SaveChanges();
+		}
+
 		public static void CreateSource(DatabaseCtx ctx)
 		{
 			if(!ctx.Sources.Any()){

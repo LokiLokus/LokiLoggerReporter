@@ -21,8 +21,12 @@ namespace lokiloggerreporter.Models {
 
 		[ForeignKey("Source")]
 		public string SourceId { get; set; }
-
 		public Source Source { get; set; }
+		
+		[ForeignKey("WebRequest")]
+		public string WebRequestId { get; set; }
+
+		public WebRequest WebRequest { get; set; }
 
 	}
 	public enum LogTyp
@@ -41,5 +45,5 @@ namespace lokiloggerreporter.Models {
 		Critical,
 		SystemCritical
 	}
-
+	
 }

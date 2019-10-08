@@ -33,20 +33,40 @@ namespace lokiloggerreporter.Rest {
 						if (model.Logs != null)
 						{
 							var dbLogs = model.Logs.Select(d =>
-							new Log{
-								Class = d.Class,
-								Data = d.Data,
-								Line = d.Line,
-								Exception = d.Exception,
-								Message = d.Message,
-								Method = d.Method,
-								Source = source,
-								Time = d.Time,
-								LogLevel = d.LogLevel,
-								LogTyp = d.LogTyp,
-								SourceId = source.SourceId,
-								ThreadId = d.ThreadId
-							});
+								{
+									Log result = new Log
+									{
+										Class = d.Class,
+										Line = d.Line,
+										Exception = d.Exception,
+										Message = d.Message,
+										Method = d.Method,
+										Source = source,
+										Time = d.Time,
+										LogLevel = d.LogLevel,
+										LogTyp = d.LogTyp,
+										SourceId = source.SourceId,
+										ThreadId = d.ThreadId
+									};
+									if (d.LogTyp == LogTyp.RestCall)
+									{
+										try
+										{
+											WebRequest web = JsonConvert.DeserializeObject<WebRequest>(d.Data);
+											result.WebRequest = web;
+										}
+										catch (Exception e)
+										{
+											Console.WriteLine(e);
+										}
+									}
+									else
+									{
+										result.Data = d.Data;
+									}
+									return result;
+								}
+							);
 							DatabaseCtx.Logs.AddRange(dbLogs);
 							await DatabaseCtx.SaveChangesAsync();
 							return Ok();
