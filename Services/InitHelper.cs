@@ -14,7 +14,7 @@ namespace lokiloggerreporter.Services {
 			{
 				try
 				{
-					WebRequest request = JsonConvert.DeserializeObject<WebRequest>(log.Data);
+					WebRequest request = JsonConvert.DeserializeObject<List<WebRequest>>(log.Data)[0];
 					log.WebRequest = request;
 				}
 				catch (Exception e)
