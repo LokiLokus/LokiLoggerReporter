@@ -1,20 +1,57 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using lokiloggerreporter.Models;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace lokiloggerreporter.Hubs
 {
-    public class AnalyzeHub : Hub        
+    public class AnalyzeHub : Hub
     {
-        public async Task Request(string user, string message)
+        public AnalyzeHub(DatabaseCtx db)
         {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            DatabaseCtx = db;
+        }
+
+        public DatabaseCtx DatabaseCtx { get; set; }
+
+        public async Task<ReturnData> Request(RequestModel model)
+        {
+            ReturnData result = new ReturnData()
+            {
+                Count = model.Count,
+                From = model.From,
+            };
+            var query = DatabaseCtx.Logs.Where(x =>
+                x.SourceId == model.SourceId &&
+                (model.Debug && x.LogLevel == LogLevel.Debug ||
+                 model.Info && x.LogLevel == LogLevel.Information ||
+                 model.Warn && x.LogLevel == LogLevel.Warning ||
+                 model.Error && x.LogLevel == LogLevel.Critical ||
+                 model.Critical && x.LogLevel == LogLevel.SystemCritical) &&
+                (model.Invoke && x.LogTyp == LogTyp.Invoke ||
+                 model.Normal && x.LogTyp == LogTyp.Normal ||
+                 model.Return && x.LogTyp == LogTyp.Return ||
+                 model.Exec && x.LogTyp == LogTyp.Exception ||
+                 model.Exec && x.LogTyp == LogTyp.Exception ||
+                 model.Rest && x.LogTyp == LogTyp.RestCall) &&
+                (model.ThreadId == null || x.ThreadId == model.ThreadId) &&
+                (model.FromTime == null || x.Time >= model.FromTime) &&
+                (model.ToTime == null || x.Time <= model.ToTime) &&
+                (model.IncludeRest == null || x.WebRequest.Path.Contains(model.IncludeRest)) &&
+                (model.ExcludeRest == null || !x.WebRequest.Path.Contains(model.IncludeRest))
+            );
+            result.TotalCount = await query.CountAsync();
+            result.Logs = await query.Skip(model.From).Take(model.Count).Include(x => x.WebRequest).ToListAsync();
+            
+            
+            return result;
         }
     }
 
-    class RequestModel
+    public class RequestModel
     {
         public bool Debug { get; set; }
         public bool Info { get; set; }
@@ -22,10 +59,12 @@ namespace lokiloggerreporter.Hubs
         public bool Error { get; set; }
         public bool Critical { get; set; }
 
-        public DateTime? From { get; set; }
-        public DateTime? To { get; set; }
-        
-        public bool Auto { get; set; }
+        public DateTime? FromTime { get; set; }
+        public DateTime? ToTime { get; set; }
+
+        public int From { get; set; }
+        public int Count { get; set; }
+
         public bool Normal { get; set; }
         public bool Invoke { get; set; }
         public bool Return { get; set; }
@@ -37,13 +76,16 @@ namespace lokiloggerreporter.Hubs
 
         public string IncludeData { get; set; }
         public string ExcludeData { get; set; }
-        
+
+
+        public string IncludeRest { get; set; }
+        public string ExcludeRest { get; set; }
+
         public string IncludeException { get; set; }
         public string ExcludeException { get; set; }
 
-        
         public string SourceId { get; set; }
-        
+
         public string IncludeClass { get; set; }
         public string ExcludeClass { get; set; }
 
@@ -51,10 +93,9 @@ namespace lokiloggerreporter.Hubs
         public string ExcludePath { get; set; }
 
         public int? ThreadId { get; set; }
-        
     }
 
-    class ReturnData
+    public class ReturnData
     {
         public List<Log> Logs { get; set; }
         public int From { get; set; }

@@ -47,7 +47,16 @@ namespace lokiloggerreporter {
 				services.AddDbContext<DatabaseCtx>(opt => opt.UseSqlite(databaseSettings.ConnectionString));
 			}
 			
-			
+			services.AddCors(options =>
+			{
+				options.AddPolicy("stuff",
+					builder =>
+					{
+						builder.WithOrigins("*")
+							.AllowAnyHeader()
+							.AllowAnyMethod();
+					});
+			});
 			services.Configure<CookiePolicyOptions>(options =>
 			{
 				// This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -79,6 +88,13 @@ namespace lokiloggerreporter {
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
 		{
+			
+			app.UseCors(builder => builder
+				.AllowAnyOrigin()
+				.AllowAnyMethod()
+				.AllowAnyHeader()
+				.AllowCredentials());
+			app.UseCors("default");
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
@@ -118,9 +134,6 @@ namespace lokiloggerreporter {
 					"{controller=Home}/{action=Index}/{id?}");
 			});
 			var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
-			InitHelper.UpdateDatabaseCtx(ctx);
-
-
 		}
 		
 		private T GetSettings<T>(string section)
