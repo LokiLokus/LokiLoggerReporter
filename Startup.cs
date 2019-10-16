@@ -120,7 +120,7 @@ namespace lokiloggerreporter {
 
 			app.UseSignalR(x =>
 			{
-				x.MapHub<AnalyzeHub>("/Analyze");
+				x.MapHub<AnalyzeHub>("/websocket");
 			});
 			app.UseStaticFiles();
 			app.UseCookiePolicy();
