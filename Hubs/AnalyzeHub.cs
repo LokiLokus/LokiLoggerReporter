@@ -24,6 +24,8 @@ namespace lokiloggerreporter.Hubs
                 Count = model.Count,
                 From = model.From,
             };
+            if (string.IsNullOrWhiteSpace(model.ExcludeRest)) model.ExcludeRest = null;
+            if (string.IsNullOrWhiteSpace(model.IncludeRest)) model.IncludeRest = null;
             var query = DatabaseCtx.Logs.Where(x =>
                 x.SourceId == model.SourceId &&
                 (model.Debug && x.LogLevel == LogLevel.Debug ||
@@ -40,8 +42,8 @@ namespace lokiloggerreporter.Hubs
                 (model.ThreadId == null || x.ThreadId == model.ThreadId) &&
                 (model.FromTime == null || x.Time >= model.FromTime) &&
                 (model.ToTime == null || x.Time <= model.ToTime) &&
-                (model.IncludeRest == null || model.IncludeRest == "" || x.WebRequest.Path.Contains(model.IncludeRest)) &&
-                (model.ExcludeRest == null || model.ExcludeRest == "" || !x.WebRequest.Path.Contains(model.IncludeRest))
+                (model.IncludeRest == null || x.WebRequest.Path.Contains(model.IncludeRest)) &&
+                (model.ExcludeRest == null || !x.WebRequest.Path.Contains(model.ExcludeRest))
             );
             result.TotalCount = await query.CountAsync();
             result.Logs = await query.Skip(model.From).Take(model.Count).Include(x => x.WebRequest).ToListAsync();
