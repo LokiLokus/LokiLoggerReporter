@@ -26,7 +26,7 @@ namespace lokiloggerreporter.Hubs
             };
             if (string.IsNullOrWhiteSpace(model.ExcludeRest)) model.ExcludeRest = null;
             if (string.IsNullOrWhiteSpace(model.IncludeRest)) model.IncludeRest = null;
-            var query = DatabaseCtx.Logs.Where(x =>
+            IQueryable<Log> query = DatabaseCtx.Logs.Where(x =>
                 x.SourceId == model.SourceId &&
                 (model.Debug && x.LogLevel == LogLevel.Debug ||
                  model.Info && x.LogLevel == LogLevel.Information ||

@@ -52,7 +52,7 @@ namespace lokiloggerreporter.Rest {
 									{
 										try
 										{
-											WebRequest web = JsonConvert.DeserializeObject<WebRequest>(d.Data);
+											WebRequest web = JsonConvert.DeserializeObject<List<WebRequest>>(d.Data)[0];
 											result.WebRequest = web;
 										}
 										catch (Exception e)

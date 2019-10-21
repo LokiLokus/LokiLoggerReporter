@@ -9,6 +9,7 @@ using lokiloggerreporter.GraphQL;
 using lokiloggerreporter.Hubs;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
+using lokiloggerreporter.Services.Implementation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -82,6 +83,7 @@ namespace lokiloggerreporter {
 			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 			services.AddSingleton<ISettingsService, SettingService>();
+			services.AddTransient<StatisticService, StatisticService>();
 			services.AddSignalR();
 		}
 
