@@ -20,21 +20,11 @@ namespace lokiloggerreporter.Services.Implementation
             DatabaseCtx = databaseCtx;
         }
 
-
-
-        public EndPointUsage GetEndPointUsageStatistic(string sourceId)
+        public EndPointUsage GetEndPointUsageStatistic(IQueryable<Log> inputLogs)
         {
+            IQueryable<IGrouping<string, Log>> logData = inputLogs.Include(x => x.WebRequest).GroupBy(x => x.WebRequest.Path);
 
-
-            IQueryable<IGrouping<string, Log>> logData = DatabaseCtx.Logs
-                .Where(x => x.SourceId == sourceId || x.LogTyp == LogTyp.RestCall)
-                .Include(x => x.WebRequest).GroupBy(x => x.WebRequest.Path);
-
-
-
-
-            var logs = DatabaseCtx.Logs.Where(x => x.SourceId == sourceId && x.LogTyp == LogTyp.RestCall)
-                .Include(x => x.WebRequest).Select(x => x.WebRequest);
+            var logs = inputLogs.Select(x => x.WebRequest);
             EndPointUsage result = new EndPointUsage();
             result.EndPoint = "";
             IEnumerable<List<string>> endpoints = ObtainEndPoints(logs);
