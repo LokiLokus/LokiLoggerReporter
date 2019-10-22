@@ -33,7 +33,7 @@ namespace lokiloggerreporter.Services.Implementation
 
 
 
-            var logs = DatabaseCtx.Logs.Where(x => x.SourceId == sourceId && x.LogTyp == LogTyp.RestCall).Take(100)
+            var logs = DatabaseCtx.Logs.Where(x => x.SourceId == sourceId && x.LogTyp == LogTyp.RestCall)
                 .Include(x => x.WebRequest).Select(x => x.WebRequest);
             EndPointUsage result = new EndPointUsage();
             result.EndPoint = "";
