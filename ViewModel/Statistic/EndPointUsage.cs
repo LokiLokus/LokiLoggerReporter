@@ -1,11 +1,15 @@
 using System.Collections.Generic;
+using lokiloggerreporter.Models;
+using Newtonsoft.Json;
 
 namespace lokiloggerreporter.ViewModel.Statistic
 {
     public class EndPointUsage
     {
-        public List<EndPointUsage> EndPoints { get; set; }
+        [JsonIgnore] public EndPointUsage Parent { get; set; }
+        public List<EndPointUsage> EndPoints { get; set; } = new List<EndPointUsage>();
         public string EndPoint { get; set; }
+        public List<WebRequest> WebRequests { get; set; } = new List<WebRequest>();
         public int RequestCount { get; set; }
         public int ErrorCount { get; set; }
         public int AverageRequestTime { get; set; }
