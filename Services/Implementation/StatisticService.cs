@@ -14,24 +14,27 @@ namespace lokiloggerreporter.Services.Implementation
     public class StatisticService
     {
         public DatabaseCtx DatabaseCtx { get; set; }
+
         public StatisticService(DatabaseCtx databaseCtx)
         {
             DatabaseCtx = databaseCtx;
         }
-        
-        
+
+
 
         public EndPointUsage GetEndPointUsageStatistic(string sourceId)
         {
-            
 
-            IQueryable<IGrouping<string, Log>> logData = DatabaseCtx.Logs.Where(x => x.SourceId == sourceId || x.LogTyp == LogTyp.RestCall)
+
+            IQueryable<IGrouping<string, Log>> logData = DatabaseCtx.Logs
+                .Where(x => x.SourceId == sourceId || x.LogTyp == LogTyp.RestCall)
                 .Include(x => x.WebRequest).GroupBy(x => x.WebRequest.Path);
-            
-            
-            
-            
-            var logs = DatabaseCtx.Logs.Where(x => x.SourceId == sourceId && x.LogTyp == LogTyp.RestCall).Take(100).Include(x => x.WebRequest).Select(x => x.WebRequest);
+
+
+
+
+            var logs = DatabaseCtx.Logs.Where(x => x.SourceId == sourceId && x.LogTyp == LogTyp.RestCall).Take(100)
+                .Include(x => x.WebRequest).Select(x => x.WebRequest);
             EndPointUsage result = new EndPointUsage();
             result.EndPoint = "";
             IEnumerable<List<string>> endpoints = ObtainEndPoints(logs);
@@ -54,15 +57,43 @@ namespace lokiloggerreporter.Services.Implementation
                     tmp = ttmp;
                 }
             }
-            
+
             result = AddLogToLogs(logs, result);
-            
-            
-            
+            GetAllLeaves(result);
+            foreach (var endPointUsage in _Leaves)
+            {
+                endPointUsage.RequestCount = endPointUsage.WebRequests.Count;
+                endPointUsage.ErrorCount = endPointUsage.WebRequests.Where(x => x.StatusCode >= 400).Count();
+                endPointUsage.AverageRequestTime =(int) endPointUsage.WebRequests.Average(x => (x.End - x.Start).Ticks);
+                endPointUsage.MaximumRequestTime =(int) endPointUsage.WebRequests.Max(x => (x.End - x.Start).Ticks);
+                endPointUsage.MinimumRequestTime =(int) endPointUsage.WebRequests.Min(x => (x.End - x.Start).Ticks);
+                endPointUsage.MedianRequestTime =(int) endPointUsage.WebRequests.Median(x => (x.End - x.Start).Ticks);
+                
+                
+            }
             return result;
         }
 
-        private EndPointUsage AddLogToLogs(IQueryable<WebRequest> logs,EndPointUsage endPointUsage)
+        private List<EndPointUsage> _Leaves = new List<EndPointUsage>();
+
+        private void GetAllLeaves(EndPointUsage endPointUsage)
+        {
+            if (endPointUsage.EndPoints.Count == 0)
+            {
+                _Leaves.Add(endPointUsage);
+            }
+            else
+            {
+                foreach (var pointUsage in endPointUsage.EndPoints)
+                {
+                    GetAllLeaves(pointUsage);
+                }
+            }
+        }
+
+
+
+    private EndPointUsage AddLogToLogs(IQueryable<WebRequest> logs,EndPointUsage endPointUsage)
         {
             foreach (var log in logs)
             {
