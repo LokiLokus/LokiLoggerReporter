@@ -19,5 +19,7 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int MinimumRequestTime { get; set; }
         public int MaximumRequestTime { get; set; }
         public int MedianRequestTime { get; set; }
+        
+        [JsonIgnore] public bool Processed { get; set; }
     }
 }

@@ -59,34 +59,62 @@ namespace lokiloggerreporter.Services.Implementation
             }
 
             result = AddLogToLogs(logs, result);
-            GetAllLeaves(result);
+            GetNodes(result,true);
             foreach (var endPointUsage in _Leaves)
             {
                 endPointUsage.RequestCount = endPointUsage.WebRequests.Count;
                 endPointUsage.ErrorCount = endPointUsage.WebRequests.Where(x => x.StatusCode >= 400).Count();
-                endPointUsage.AverageRequestTime =(int) endPointUsage.WebRequests.Average(x => (x.End - x.Start).Ticks);
-                endPointUsage.MaximumRequestTime =(int) endPointUsage.WebRequests.Max(x => (x.End - x.Start).Ticks);
-                endPointUsage.MinimumRequestTime =(int) endPointUsage.WebRequests.Min(x => (x.End - x.Start).Ticks);
-                endPointUsage.MedianRequestTime =(int) endPointUsage.WebRequests.Median(x => (x.End - x.Start).Ticks);
-                
-                
+                endPointUsage.AverageRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Average(x => (x.End - x.Start).Ticks);
+                endPointUsage.MaximumRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Max(x => (x.End - x.Start).Ticks);
+                endPointUsage.MinimumRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Min(x => (x.End - x.Start).Ticks);
+                endPointUsage.MedianRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Median(x => (x.End - x.Start).Ticks);
+                endPointUsage.Processed = true;
             }
+
+            GetNodes(result, false);
+
+            while (_Nodes.Any(x => !x.Processed))
+            {
+                IEnumerable<EndPointUsage> nodes = _Nodes.Where(x => !x.Processed && x.EndPoints.All(z => z.Processed));
+                foreach (EndPointUsage tmp in nodes)
+                {
+                    tmp.RequestCount = tmp.EndPoints.Sum(x => x.RequestCount);
+                    tmp.ErrorCount = tmp.EndPoints.Sum(x => x.RequestCount);
+                    tmp.AverageRequestTime =(int) tmp.EndPoints.DefaultIfEmpty().Average(x => x.AverageRequestTime);
+                    tmp.MaximumRequestTime = (int)tmp.EndPoints.DefaultIfEmpty().Max(x => x.MaximumRequestTime);
+                    tmp.MinimumRequestTime = (int)tmp.EndPoints.DefaultIfEmpty().Min(x => x.MinimumRequestTime);
+                    tmp.MedianRequestTime = (int)tmp.EndPoints.DefaultIfEmpty().Median(x => x.MedianRequestTime);
+                    tmp.Processed = true;
+                }
+            }
+            
             return result;
         }
+        
+        
 
         private List<EndPointUsage> _Leaves = new List<EndPointUsage>();
+        private List<EndPointUsage> _Nodes = new List<EndPointUsage>();
 
-        private void GetAllLeaves(EndPointUsage endPointUsage)
+        
+        
+        private void GetNodes(EndPointUsage endPointUsage,bool onlyLeaves)
         {
+            if(!onlyLeaves)_Nodes.Add(endPointUsage);
             if (endPointUsage.EndPoints.Count == 0)
             {
-                _Leaves.Add(endPointUsage);
+                if (onlyLeaves)
+                    _Leaves.Add(endPointUsage);
+                else
+                {
+                    _Nodes.Add(endPointUsage);
+                }
             }
             else
             {
                 foreach (var pointUsage in endPointUsage.EndPoints)
                 {
-                    GetAllLeaves(pointUsage);
+                    GetNodes(pointUsage,onlyLeaves);
                 }
             }
         }
