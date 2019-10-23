@@ -20,11 +20,12 @@ namespace lokiloggerreporter.Services.Implementation
             DatabaseCtx = databaseCtx;
         }
 
-        public EndPointUsage GetEndPointUsageStatistic(IQueryable<Log> inputLogs)
+        public async Task<EndPointUsage> GetEndPointUsageStatistic(string sourceId)
         {
             //IQueryable<IGrouping<string, Log>> logData = inputLogs.Include(x => x.WebRequest).GroupBy(x => x.WebRequest.Path);
 
-            var logs = inputLogs.Select(x => x.WebRequest).ToList();
+            
+            var logs = DatabaseCtx.WebRequest.Where(x => DatabaseCtx.Logs.Where(z => z.SourceId == sourceId).Any(z => z.WebRequestId == x.WebRequestId)).ToList();
             EndPointUsage result = new EndPointUsage();
             result.EndPoint = "";
             IEnumerable<List<string>> endpoints = ObtainEndPoints(logs);
@@ -47,6 +48,7 @@ namespace lokiloggerreporter.Services.Implementation
                     tmp = ttmp;
                 }
             }
+
 
             result = AddLogToLogs(logs, result);
             GetNodes(result,true);
@@ -130,7 +132,10 @@ namespace lokiloggerreporter.Services.Implementation
 
         private IEnumerable<List<string>> ObtainEndPoints(IEnumerable<WebRequest> logs)
         {
-            IEnumerable<List<string>> endpoints = logs.DistinctBy(x => x.Path).Select(x => x.Path).Select(x => x.Split("/",StringSplitOptions.None).ToList());
+            IEnumerable<List<string>> endpoints = logs.DistinctBy(x => x.Path).Select(x => x.Path).Select(x =>{
+                if(x == null) return new List<string>();
+                return x.Split("/", StringSplitOptions.None).ToList();
+            });
             return endpoints;
         }
     }
