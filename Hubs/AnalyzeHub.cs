@@ -44,7 +44,7 @@ namespace lokiloggerreporter.Hubs
                 (model.ToTime == null || x.Time <= model.ToTime) &&
                 (model.IncludeRest == null || x.WebRequest.Path.Contains(model.IncludeRest)) &&
                 (model.ExcludeRest == null || !x.WebRequest.Path.Contains(model.ExcludeRest))
-            );
+            ).Include(x => x.WebRequest);
 
             return StatisticService.GetEndPointUsageStatistic(query);
         }
