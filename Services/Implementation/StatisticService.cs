@@ -22,9 +22,9 @@ namespace lokiloggerreporter.Services.Implementation
 
         public EndPointUsage GetEndPointUsageStatistic(IQueryable<Log> inputLogs)
         {
-            IQueryable<IGrouping<string, Log>> logData = inputLogs.Include(x => x.WebRequest).GroupBy(x => x.WebRequest.Path);
+            //IQueryable<IGrouping<string, Log>> logData = inputLogs.Include(x => x.WebRequest).GroupBy(x => x.WebRequest.Path);
 
-            var logs = inputLogs.Select(x => x.WebRequest);
+            var logs = inputLogs.Select(x => x.WebRequest).ToList();
             EndPointUsage result = new EndPointUsage();
             result.EndPoint = "";
             IEnumerable<List<string>> endpoints = ObtainEndPoints(logs);
@@ -52,12 +52,13 @@ namespace lokiloggerreporter.Services.Implementation
             GetNodes(result,true);
             foreach (var endPointUsage in _Leaves)
             {
-                endPointUsage.RequestCount = endPointUsage.WebRequests.Count;
-                endPointUsage.ErrorCount = endPointUsage.WebRequests.Where(x => x.StatusCode >= 400).Count();
                 endPointUsage.AverageRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Average(x => (x.End - x.Start).Ticks);
                 endPointUsage.MaximumRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Max(x => (x.End - x.Start).Ticks);
                 endPointUsage.MinimumRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Min(x => (x.End - x.Start).Ticks);
                 endPointUsage.MedianRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Median(x => (x.End - x.Start).Ticks);
+                endPointUsage.RequestCount = endPointUsage.WebRequests.Count;
+                endPointUsage.ErrorCount = endPointUsage.WebRequests.Where(x => x.StatusCode >= 400).Count();
+                
                 endPointUsage.Processed = true;
             }
 
@@ -111,7 +112,7 @@ namespace lokiloggerreporter.Services.Implementation
 
 
 
-    private EndPointUsage AddLogToLogs(IQueryable<WebRequest> logs,EndPointUsage endPointUsage)
+    private EndPointUsage AddLogToLogs(IEnumerable<WebRequest> logs,EndPointUsage endPointUsage)
         {
             foreach (var log in logs)
             {
@@ -123,12 +124,11 @@ namespace lokiloggerreporter.Services.Implementation
                 }
                 tmp.WebRequests.Add(log);
             }
-
             return endPointUsage;
         }
         
 
-        private IEnumerable<List<string>> ObtainEndPoints(IQueryable<WebRequest> logs)
+        private IEnumerable<List<string>> ObtainEndPoints(IEnumerable<WebRequest> logs)
         {
             IEnumerable<List<string>> endpoints = logs.DistinctBy(x => x.Path).Select(x => x.Path).Select(x => x.Split("/",StringSplitOptions.None).ToList());
             return endpoints;

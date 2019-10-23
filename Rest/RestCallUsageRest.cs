@@ -15,7 +15,8 @@ namespace lokiloggerreporter.Rest
         [HttpGet("EndPointsFromSource/{sourceId}")]
         public IActionResult GetStatisticFromSource([FromRoute] string sourceId)
         {
-            return Ok(StatisticService.GetEndPointUsageStatistic(sourceId));
+            return Ok();
+            //return Ok(StatisticService.GetEndPointUsageStatistic(sourceId));
         }
     }
 }
