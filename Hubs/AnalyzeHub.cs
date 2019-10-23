@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using lokiloggerreporter.Models;
+using lokiloggerreporter.Services.Implementation;
+using lokiloggerreporter.ViewModel.Statistic;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,12 +12,43 @@ namespace lokiloggerreporter.Hubs
 {
     public class AnalyzeHub : Hub
     {
-        public AnalyzeHub(DatabaseCtx db)
+        public StatisticService StatisticService { get; set; }
+        public AnalyzeHub(DatabaseCtx db,StatisticService service)
         {
+            StatisticService = service;
             DatabaseCtx = db;
         }
 
         public DatabaseCtx DatabaseCtx { get; set; }
+
+        public async Task<EndPointUsage> RequestAnalyseUsage(RequestModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.ExcludeRest)) model.ExcludeRest = null;
+            if (string.IsNullOrWhiteSpace(model.IncludeRest)) model.IncludeRest = null;
+            IQueryable<Log> query = DatabaseCtx.Logs.Where(x =>
+                x.SourceId == model.SourceId &&
+                x.LogTyp == LogTyp.RestCall && 
+                (model.Debug && x.LogLevel == LogLevel.Debug ||
+                 model.Info && x.LogLevel == LogLevel.Information ||
+                 model.Warn && x.LogLevel == LogLevel.Warning ||
+                 model.Error && x.LogLevel == LogLevel.Critical ||
+                 model.Critical && x.LogLevel == LogLevel.SystemCritical) &&
+                (model.Invoke && x.LogTyp == LogTyp.Invoke ||
+                 model.Normal && x.LogTyp == LogTyp.Normal ||
+                 model.Return && x.LogTyp == LogTyp.Return ||
+                 model.Exec && x.LogTyp == LogTyp.Exception ||
+                 model.Exec && x.LogTyp == LogTyp.Exception ||
+                 model.Rest && x.LogTyp == LogTyp.RestCall) &&
+                (model.ThreadId == null || x.ThreadId == model.ThreadId) &&
+                (model.FromTime == null || x.Time >= model.FromTime) &&
+                (model.ToTime == null || x.Time <= model.ToTime) &&
+                (model.IncludeRest == null || x.WebRequest.Path.Contains(model.IncludeRest)) &&
+                (model.ExcludeRest == null || !x.WebRequest.Path.Contains(model.ExcludeRest))
+            );
+
+            return StatisticService.GetEndPointUsageStatistic(query);
+        }
+        
 
         public async Task<ReturnData> Request(RequestModel model)
         {
