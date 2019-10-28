@@ -24,7 +24,7 @@ namespace lokiloggerreporter.Hubs
         public async Task<EndPointUsage> RequestAnalyseUsage(RequestModel model)
         {
 
-            return await StatisticService.GetEndPointUsageStatistic(model.SourceId);
+            return await StatisticService.GetEndPointUsageStatistic(model);
         }
         
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using lokiloggerreporter.Extensions;
+using lokiloggerreporter.Hubs;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.ViewModel.Statistic;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -20,8 +21,9 @@ namespace lokiloggerreporter.Services.Implementation
             DatabaseCtx = databaseCtx;
         }
 
-        public async Task<EndPointUsage> GetEndPointUsageStatistic(string sourceId)
+        public async Task<EndPointUsage> GetEndPointUsageStatistic(RequestModel model)
         {
+            string sourceId = model.SourceId;
             //IQueryable<IGrouping<string, Log>> logData = inputLogs.Include(x => x.WebRequest).GroupBy(x => x.WebRequest.Path);
 
             
@@ -80,7 +82,20 @@ namespace lokiloggerreporter.Services.Implementation
                     tmp.Processed = true;
                 }
             }
-            
+
+            _Nodes.ForEach(x => x.Processed = false);
+            result.EndPoint = "";
+            result.Processed = true;
+            while (_Nodes.Any(x => !x.Processed))
+            {
+                List<EndPointUsage> nodes = _Nodes.Where(x => !x.Processed && x.Parent != null && x.Parent.Processed).ToList();
+                foreach (EndPointUsage tmp in nodes)
+                {
+                    if(tmp.EndPoint != "")
+                        tmp.EndPoint = tmp.Parent.EndPoint + '/' + tmp.EndPoint;
+                    tmp.Processed = true;
+                }
+            }
             return result;
         }
         
