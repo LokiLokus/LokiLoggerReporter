@@ -21,5 +21,6 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int MedianRequestTime { get; set; }
         
         [JsonIgnore] public bool Processed { get; set; }
+        public long AbsoluteRequestTime { get; set; }
     }
 }

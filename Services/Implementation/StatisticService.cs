@@ -58,6 +58,7 @@ namespace lokiloggerreporter.Services.Implementation
                 endPointUsage.MaximumRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Max(x => (x.End - x.Start).Ticks);
                 endPointUsage.MinimumRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Min(x => (x.End - x.Start).Ticks);
                 endPointUsage.MedianRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Median(x => (x.End - x.Start).Ticks);
+                endPointUsage.AbsoluteRequestTime = (long) endPointUsage.WebRequests.DefaultIfEmpty().Sum(x => (x.End - x.Start).Ticks);
                 endPointUsage.RequestCount = endPointUsage.WebRequests.Count;
                 endPointUsage.ErrorCount = endPointUsage.WebRequests.Where(x => x.StatusCode >= 400).Count();
                 
@@ -77,7 +78,19 @@ namespace lokiloggerreporter.Services.Implementation
                     tmp.MaximumRequestTime = (int)tmp.EndPoints.DefaultIfEmpty().Max(x => x.MaximumRequestTime);
                     tmp.MinimumRequestTime = (int)tmp.EndPoints.DefaultIfEmpty().Min(x => x.MinimumRequestTime);
                     tmp.MedianRequestTime = (int)tmp.EndPoints.DefaultIfEmpty().Median(x => x.MedianRequestTime);
+                    tmp.AbsoluteRequestTime = (long) tmp.EndPoints.DefaultIfEmpty().Sum(x => x.AbsoluteRequestTime);
                     tmp.Processed = true;
+                }
+            }
+            _Nodes.ForEach(x => x.Processed = false);
+            result.EndPoint = "/";
+            result.Processed = true;
+            while (_Nodes.Any(x => !x.Processed))
+            {
+                var tmpNodes = _Nodes.Where(x => !x.Processed && x.Parent.Processed);
+                foreach (var tmpNode in tmpNodes)
+                {
+                    tmpNode.EndPoint = tmpNode.Parent + "/" + tmpNode.EndPoint;
                 }
             }
             
