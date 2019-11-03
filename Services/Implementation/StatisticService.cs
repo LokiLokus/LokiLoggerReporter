@@ -91,6 +91,7 @@ namespace lokiloggerreporter.Services.Implementation
                 foreach (var tmpNode in tmpNodes)
                 {
                     tmpNode.EndPoint = tmpNode.Parent + "/" + tmpNode.EndPoint;
+                    tmpNode.Processed = true;
                 }
             }
             
