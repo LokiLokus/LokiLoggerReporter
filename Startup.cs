@@ -85,6 +85,8 @@ namespace lokiloggerreporter {
 			services.AddSingleton<ISettingsService, SettingService>();
 			services.AddTransient<StatisticService, StatisticService>();
 			services.AddSignalR();
+			
+			services.AddSpaStaticFiles(options => options.RootPath = "clientapp/dist");
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,11 +102,6 @@ namespace lokiloggerreporter {
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				
-				//InitHelper.CreateSource(ctx);
-				//InitHelper.AddLogs(ctx);
-				
-				
 			}
 			else
 			{
@@ -124,16 +121,13 @@ namespace lokiloggerreporter {
 			{
 				x.MapHub<AnalyzeHub>("/websocket");
 			});
-			app.UseStaticFiles();
 			app.UseCookiePolicy();
-			app.UseGraphQL<AppSchema>();
-			
-			app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());  
-			app.UseMvc(routes =>
+
+			// use middleware and launch server for Vue
+			app.UseSpaStaticFiles();
+			app.UseSpa(spa =>
 			{
-				routes.MapRoute(
-					"default",
-					"{controller=Home}/{action=Index}/{id?}");
+				spa.Options.SourcePath = "client-app";
 			});
 			var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
 		}

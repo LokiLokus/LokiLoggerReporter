@@ -2,14 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <SpaRoot>clientapp\</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="GraphQL" Version="2.4.0" />
     <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="3.4.0" />
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="3.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.8" />
     <PackageReference Include="Microsoft.NET.Sdk.Razor" Version="2.1.2" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.1.2" />
@@ -23,8 +25,15 @@
   </ItemGroup>
 
   <Target Name="client-app" BeforeTargets="ComputeFilesToPublish">
-    <Exec Command="npm install" WorkingDirectory="client-app"></Exec>
-    <Exec Command="npm run build" WorkingDirectory="client-app"></Exec>
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
+    <ItemGroup>
+      <DistFiles Include="$(SpaRoot)dist\**" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>%(DistFiles.Identity)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
   </Target>
 
 
@@ -1749,6 +1758,31 @@
     <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\jquery.slim.min.js" />
     <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\jquery.slim.min.map" />
     <_ContentIncludedByDefault Remove="wwwroot\lib\vue\vue.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\css\app.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\css\chunk-vendors.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\favicon.ico" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\android-chrome-192x192.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\android-chrome-512x512.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\apple-touch-icon-120x120.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\apple-touch-icon-152x152.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\apple-touch-icon-180x180.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\apple-touch-icon-60x60.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\apple-touch-icon-76x76.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\apple-touch-icon.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\favicon-16x16.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\favicon-32x32.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\msapplication-icon-144x144.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\mstile-150x150.png" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\img\icons\safari-pinned-tab.svg" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\index.html" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\js\app.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\js\app.js.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\js\chunk-vendors.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\js\chunk-vendors.js.map" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\manifest.json" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\precache-manifest.cc8ca62f00458f9d10b6971ae0f1592e.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\robots.txt" />
+    <_ContentIncludedByDefault Remove="wwwroot\client-app\service-worker.js" />
   </ItemGroup>
 
   <ItemGroup>
