@@ -95,7 +95,7 @@ namespace lokiloggerreporter.Services.Implementation
                 var tmpNodes = _Nodes.Where(x => !x.Processed && x.Parent.Processed);
                 foreach (var tmpNode in tmpNodes)
                 {
-                    tmpNode.EndPoint = tmpNode.Parent + "/" + tmpNode.EndPoint;
+                    tmpNode.EndPoint = tmpNode.Parent.EndPoint + "/" + tmpNode.EndPoint;
                     tmpNode.Processed = true;
                 }
             }
