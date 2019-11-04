@@ -190,7 +190,7 @@ export default {
     },
     async mounted(){
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl("http://localhost:5000/websocket")
+            .withUrl("/websocket")
             .build();
         await this.connection.start();
         this.getSources();
@@ -198,7 +198,7 @@ export default {
     methods:{
         async getSources() {
             try {
-                const response = await axios.get(`http://llogger.hopfenspace.org/api/Source/All`);
+                const response = await axios.get(`/api/Source/All`);
                 for(var i = 0; i < response.data.length;i++){
                     response.data[i].FormattedName = response.data[i].Name + " - " + response.data[i].Tag + " / " + response.data[i].Version
                 }

@@ -58,7 +58,7 @@ export default Vue.extend({
         },
         async getData() {
             try {
-                const response = await axios.get(`http://llogger.hopfenspace.org/api/Source/All`);
+                const response = await axios.get(`/api/Source/All`);
                 this.sources = response.data;
             } catch (e) {
                 console.log(e);
