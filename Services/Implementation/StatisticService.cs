@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using lokiloggerreporter.Extensions;
+using lokiloggerreporter.Hubs;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.ViewModel.Statistic;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -20,12 +21,15 @@ namespace lokiloggerreporter.Services.Implementation
             DatabaseCtx = databaseCtx;
         }
 
-        public async Task<EndPointUsage> GetEndPointUsageStatistic(string sourceId)
+        public async Task<EndPointUsage> GetEndPointUsageStatistic(RequestModel model)
         {
             //IQueryable<IGrouping<string, Log>> logData = inputLogs.Include(x => x.WebRequest).GroupBy(x => x.WebRequest.Path);
 
             
-            var logs = DatabaseCtx.WebRequest.Where(x => DatabaseCtx.Logs.Where(z => z.SourceId == sourceId).Any(z => z.WebRequestId == x.WebRequestId)).ToList();
+            var logs = DatabaseCtx.WebRequest.Where(x => DatabaseCtx.Logs.Where(z => z.SourceId == model.SourceId && 
+                                                                                     (model.FromTime == null || x.Start >= model.FromTime) &&
+                                                                                     (model.ToTime == null || x.Start <= model.ToTime)
+                                                                                     ).Any(z => z.WebRequestId == x.WebRequestId)).ToList();
             EndPointUsage result = new EndPointUsage();
             result.EndPoint = "";
             IEnumerable<List<string>> endpoints = ObtainEndPoints(logs);
@@ -54,14 +58,15 @@ namespace lokiloggerreporter.Services.Implementation
             GetNodes(result,true);
             foreach (var endPointUsage in _Leaves)
             {
-                endPointUsage.AverageRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Average(x => (x.End - x.Start).Ticks);
-                endPointUsage.MaximumRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Max(x => (x.End - x.Start).Ticks);
-                endPointUsage.MinimumRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Min(x => (x.End - x.Start).Ticks);
-                endPointUsage.MedianRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Median(x => (x.End - x.Start).Ticks);
-                endPointUsage.AbsoluteRequestTime = (long) endPointUsage.WebRequests.DefaultIfEmpty().Sum(x => (x.End - x.Start).Ticks);
-                endPointUsage.RequestCount = endPointUsage.WebRequests.Count;
-                endPointUsage.ErrorCount = endPointUsage.WebRequests.Where(x => x.StatusCode >= 400).Count();
-                
+                if(endPointUsage.WebRequests.Count != 0){
+                    endPointUsage.AverageRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Average(x => (x.End - x.Start).Ticks);
+                    endPointUsage.MaximumRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Max(x => (x.End - x.Start).Ticks);
+                    endPointUsage.MinimumRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Min(x => (x.End - x.Start).Ticks);
+                    endPointUsage.MedianRequestTime =(int) endPointUsage.WebRequests.DefaultIfEmpty().Median(x => (x.End - x.Start).Ticks);
+                    endPointUsage.AbsoluteRequestTime = (long) endPointUsage.WebRequests.DefaultIfEmpty().Sum(x => (x.End - x.Start).Ticks);
+                    endPointUsage.RequestCount = endPointUsage.WebRequests.Count;
+                    endPointUsage.ErrorCount = endPointUsage.WebRequests.Where(x => x.StatusCode >= 400).Count();
+                }
                 endPointUsage.Processed = true;
             }
 

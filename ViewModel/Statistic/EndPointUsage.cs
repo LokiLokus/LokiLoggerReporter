@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using lokiloggerreporter.Models;
 using Newtonsoft.Json;
@@ -19,8 +20,17 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int MinimumRequestTime { get; set; }
         public int MaximumRequestTime { get; set; }
         public int MedianRequestTime { get; set; }
+
+        public List<RequestAnalyzeModel> Requests { get; set; }
         
         [JsonIgnore] public bool Processed { get; set; }
         public long AbsoluteRequestTime { get; set; }
+    }
+
+    public class RequestAnalyzeModel
+    {
+        public DateTime Time { get; set; }
+        public long UnixTime { get; set; }
+        public int RequestCount { get; set; }
     }
 }
