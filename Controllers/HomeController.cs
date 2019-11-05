@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Razor.Internal;
 using static System.String;
 
 namespace lokiloggerreporter.Controllers {
-	[Route("/")]
+	/*[Route("/WASANDERES")]
 	public class HomeController : Controller {
 		public DatabaseCtx DatabaseCtx { get; set; }
 		public HomeController(DatabaseCtx databaseCtx)
@@ -56,5 +56,5 @@ namespace lokiloggerreporter.Controllers {
 		{
 			return View("Table");
 		}
-	}
+	}*/
 }
