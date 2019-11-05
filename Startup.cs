@@ -1,11 +1,6 @@
 ﻿using System;
-using GraphQL;
-using GraphQL.Server;
-using GraphQL.Server.Internal;
-using GraphQL.Server.Ui.Playground;
 using lokiloggerreporter.Config;
 using lokiloggerreporter.Extensions;
-using lokiloggerreporter.GraphQL;
 using lokiloggerreporter.Hubs;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
@@ -65,11 +60,6 @@ namespace lokiloggerreporter {
 				options.MinimumSameSitePolicy = SameSiteMode.None;
 			});
 
-			services.AddScoped<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
-			services.AddScoped<AppSchema>();
- 
-			services.AddGraphQL(o => { o.ExposeExceptions = true; })
-				.AddGraphTypes(ServiceLifetime.Scoped);
 
 			services.AddSwaggerGen(c =>
 			{
@@ -101,10 +91,6 @@ namespace lokiloggerreporter {
 			{
 				app.UseDeveloperExceptionPage();
 				
-				//InitHelper.CreateSource(ctx);
-				//InitHelper.AddLogs(ctx);
-				
-				
 			}
 			else
 			{
@@ -124,11 +110,7 @@ namespace lokiloggerreporter {
 			{
 				x.MapHub<AnalyzeHub>("/websocket");
 			});
-			app.UseStaticFiles();
 			app.UseCookiePolicy();
-			app.UseGraphQL<AppSchema>();
-			
-			app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());  
 			app.UseMvc(routes =>
 			{
 				routes.MapRoute(

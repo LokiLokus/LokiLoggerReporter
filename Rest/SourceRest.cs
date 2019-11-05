@@ -28,7 +28,7 @@ namespace lokiloggerreporter.Rest
         [HttpGet("All")]
         public ActionResult GetAll()
         {
-            var data = DatabaseContext.Sources.ToList();
+            var data = DatabaseContext.Sources.OrderBy(x => x.Name).ToList();
             return Ok(data);
         }
 
