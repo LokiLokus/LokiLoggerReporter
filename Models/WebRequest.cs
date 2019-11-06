@@ -21,5 +21,10 @@ namespace lokiloggerreporter.Models
         public string Exception { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+
+        public bool IsStatusCodeSucceded
+        {
+            get { return StatusCode >= 200 && StatusCode < 400; }
+        }
     }
 }

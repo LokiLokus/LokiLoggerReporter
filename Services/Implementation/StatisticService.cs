@@ -53,7 +53,16 @@ namespace lokiloggerreporter.Services.Implementation
                 }
             }
 
-
+            model.FromTime = logs.OrderBy(x => x.Start).FirstOrDefault()?.Start;
+            model.ToTime = logs.OrderByDescending(x => x.Start).FirstOrDefault()?.Start;
+            TimeSpan analyzeSpan = ((DateTime) model.ToTime - (DateTime) model.FromTime) / 50;
+            List<DateTime> fromTimes = new List<DateTime>();
+            int i = 1;
+            do
+            {
+                fromTimes.Add((DateTime)model.FromTime+(analyzeSpan* i));
+                i++;
+            } while (fromTimes.Last() < model.ToTime);
             result = AddLogToLogs(logs, result);
             GetNodes(result,true);
             foreach (var endPointUsage in _Leaves)
@@ -66,6 +75,12 @@ namespace lokiloggerreporter.Services.Implementation
                     endPointUsage.AbsoluteRequestTime = (long) endPointUsage.WebRequests.DefaultIfEmpty().Sum(x => (x.End - x.Start).Ticks);
                     endPointUsage.RequestCount = endPointUsage.WebRequests.Count;
                     endPointUsage.ErrorCount = endPointUsage.WebRequests.Where(x => x.StatusCode >= 400).Count();
+                    Parallel.ForEach(fromTimes,
+                        x =>
+                        {
+                            endPointUsage.Requests.Add(CalculateLeaveTimeSteps(x, analyzeSpan,
+                                endPointUsage.WebRequests));
+                        });
                 }
                 endPointUsage.Processed = true;
             }
@@ -85,6 +100,13 @@ namespace lokiloggerreporter.Services.Implementation
                     tmp.MedianRequestTime = (int)tmp.EndPoints.DefaultIfEmpty().Median(x => x.MedianRequestTime);
                     tmp.AbsoluteRequestTime = (long) tmp.EndPoints.DefaultIfEmpty().Sum(x => x.AbsoluteRequestTime);
                     tmp.Processed = true;
+                    var requests = tmp.EndPoints.SelectMany(x => x.Requests);
+                    Parallel.ForEach(fromTimes,
+                        x =>
+                        {
+                            tmp.Requests.Add(CalculateNodeTimeSteps(x, analyzeSpan,
+                                requests));
+                        });
                 }
             }
             _Nodes.ForEach(x => x.Processed = false);
@@ -102,8 +124,32 @@ namespace lokiloggerreporter.Services.Implementation
             
             return result;
         }
-        
-        
+
+        private RequestAnalyzeModel CalculateNodeTimeSteps(DateTime from, TimeSpan span, IEnumerable<RequestAnalyzeModel> requests)
+        {
+            DateTime toTime = from + span;
+            RequestAnalyzeModel result = new RequestAnalyzeModel();
+            var requestsInTIme = requests.Where(x => x.FromTime >= from && x.ToTime <= toTime);
+            result.FromTime = from;
+            result.ToTime = toTime;
+            result.ErrorCount = requestsInTIme.Sum(x => x.ErrorCount);
+            result.RequestCount = requestsInTIme.Sum(x => x.RequestCount);
+            result.InterestingRequestModel = requestsInTIme.SelectMany(x => x.InterestingRequestModel).Take(50).ToList();
+            return result;
+        }
+
+        private RequestAnalyzeModel CalculateLeaveTimeSteps(DateTime from, TimeSpan span, List<WebRequest> webRequests)
+        {
+            DateTime toTime = from + span;
+            RequestAnalyzeModel result = new RequestAnalyzeModel();
+            var requestsInTIme = webRequests.Where(x => x.Start >= from && x.Start <= toTime);
+            result.FromTime = from;
+            result.ToTime = toTime;
+            result.ErrorCount = requestsInTIme.Count(x => !x.IsStatusCodeSucceded);
+            result.RequestCount = requestsInTIme.Count();
+            result.InterestingRequestModel = requestsInTIme.Where(x => !x.IsStatusCodeSucceded).Take(10).ToList();
+            return result;
+        }
 
         private List<EndPointUsage> _Leaves = new List<EndPointUsage>();
         private List<EndPointUsage> _Nodes = new List<EndPointUsage>();

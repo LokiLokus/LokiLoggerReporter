@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using lokiloggerreporter.Models;
 using Newtonsoft.Json;
@@ -21,7 +22,7 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int MaximumRequestTime { get; set; }
         public int MedianRequestTime { get; set; }
 
-        public List<RequestAnalyzeModel> Requests { get; set; }
+        public ConcurrentBag<RequestAnalyzeModel> Requests { get; set; } = new ConcurrentBag<RequestAnalyzeModel>();
         
         [JsonIgnore] public bool Processed { get; set; }
         public long AbsoluteRequestTime { get; set; }
@@ -29,8 +30,22 @@ namespace lokiloggerreporter.ViewModel.Statistic
 
     public class RequestAnalyzeModel
     {
-        public DateTime Time { get; set; }
-        public long UnixTime { get; set; }
+        public DateTime ToTime { get; set; }
+        public DateTime FromTime { get; set; }
+
+        public long UnixTime
+        {
+            get
+            {
+                return (long)FromTime
+                    .Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+                    .TotalMilliseconds;
+            }
+        }
+
+        public int ErrorCount { get; set; }
         public int RequestCount { get; set; }
+        
+        public List<WebRequest> InterestingRequestModel { get; set; } = new List<WebRequest>();
     }
 }
