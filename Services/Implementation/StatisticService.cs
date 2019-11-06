@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using lokiloggerreporter.Extensions;
@@ -15,6 +16,7 @@ namespace lokiloggerreporter.Services.Implementation
     public class StatisticService
     {
         public DatabaseCtx DatabaseCtx { get; set; }
+        public Dictionary<string,Stopwatch> Stopwatches { get; set; } = new Dictionary<string, Stopwatch>();
 
         public StatisticService(DatabaseCtx databaseCtx)
         {
@@ -23,15 +25,21 @@ namespace lokiloggerreporter.Services.Implementation
 
         public async Task<EndPointUsage> GetEndPointUsageStatistic(RequestModel model)
         {
-            //IQueryable<IGrouping<string, Log>> logData = inputLogs.Include(x => x.WebRequest).GroupBy(x => x.WebRequest.Path);
+            //I know Joins are nice, but this is faster
 
-            
+            Stopwatches["ObtainLogs"] = Stopwatch.StartNew();
             var logs = DatabaseCtx.WebRequest.Where(x => DatabaseCtx.Logs.Where(z => z.SourceId == model.SourceId && 
                                                                                      (model.FromTime == null || x.Start >= model.FromTime) &&
-                                                                                     (model.ToTime == null || x.Start <= model.ToTime)
+                                                                                     (model.ToTime == null || x.Start <= model.ToTime)&&
+                                                                                     z.LogTyp == LogTyp.RestCall
                                                                                      ).Any(z => z.WebRequestId == x.WebRequestId)).ToList();
+            
+            Stopwatches["ObtainLogs"].Stop();
             EndPointUsage result = new EndPointUsage();
             result.EndPoint = "";
+            
+            
+            Stopwatches["ObtainEndPoints"] = Stopwatch.StartNew();
             IEnumerable<List<string>> endpoints = ObtainEndPoints(logs);
             foreach (List<string> endpoint in endpoints)
             {
@@ -52,19 +60,32 @@ namespace lokiloggerreporter.Services.Implementation
                     tmp = ttmp;
                 }
             }
+            Stopwatches["ObtainEndPoints"].Stop();
+            
+            if(model.FromTime == null)
+                model.FromTime = logs.OrderBy(x => x.Start).FirstOrDefault()?.Start;
+            if(model.ToTime == null)
+                model.ToTime = logs.OrderByDescending(x => x.Start).FirstOrDefault()?.Start;
 
-            model.FromTime = logs.OrderBy(x => x.Start).FirstOrDefault()?.Start;
-            model.ToTime = logs.OrderByDescending(x => x.Start).FirstOrDefault()?.Start;
-            TimeSpan analyzeSpan = ((DateTime) model.ToTime - (DateTime) model.FromTime) / 50;
+            TimeSpan analyzeSpan = TimeSpan.Zero;
             List<DateTime> fromTimes = new List<DateTime>();
-            int i = 1;
-            do
-            {
-                fromTimes.Add((DateTime)model.FromTime+(analyzeSpan* i));
-                i++;
-            } while (fromTimes.Last() <= model.ToTime);
+            if(model.FromTime != null){
+                analyzeSpan = ((DateTime) model.ToTime - (DateTime) model.FromTime) / 50;
+                int i = 1;
+                do
+                {
+                    fromTimes.Add((DateTime)model.FromTime+(analyzeSpan* i));
+                    i++;
+                } while (fromTimes.Last() <= model.ToTime);
+            }
+            
+            Stopwatches["AddLogs"] = Stopwatch.StartNew();
             result = AddLogToLogs(logs, result);
             GetNodes(result,true);
+            Stopwatches["AddLogs"].Stop();
+            
+            
+            Stopwatches["LeaveOb"] = Stopwatch.StartNew();
             foreach (var endPointUsage in _Leaves)
             {
                 if(endPointUsage.WebRequests.Count != 0){
@@ -75,15 +96,20 @@ namespace lokiloggerreporter.Services.Implementation
                     endPointUsage.AbsoluteRequestTime = (long) endPointUsage.WebRequests.DefaultIfEmpty().Sum(x => (x.End - x.Start).Ticks);
                     endPointUsage.RequestCount = endPointUsage.WebRequests.Count;
                     endPointUsage.ErrorCount = endPointUsage.WebRequests.Where(x => x.StatusCode >= 400).Count();
-                    Parallel.ForEach(fromTimes,
-                        x =>
-                        {
-                            endPointUsage.Requests.Add(CalculateLeaveTimeSteps(x, analyzeSpan,
-                                endPointUsage.WebRequests));
-                        });
+                    if (model.FromTime != null)
+                    {
+                        Parallel.ForEach(fromTimes,
+                            x =>
+                            {
+                                endPointUsage._concurrentRequests.Add(CalculateLeaveTimeSteps(x, analyzeSpan,
+                                    endPointUsage.WebRequests));
+                            });
+                    }
                 }
                 endPointUsage.Processed = true;
             }
+            Stopwatches["LeaveOb"].Stop();
+            Stopwatches["NodePro"] = Stopwatch.StartNew();
 
             GetNodes(result, false);
 
@@ -100,15 +126,19 @@ namespace lokiloggerreporter.Services.Implementation
                     tmp.MedianRequestTime = (int)tmp.EndPoints.DefaultIfEmpty().Median(x => x.MedianRequestTime);
                     tmp.AbsoluteRequestTime = (long) tmp.EndPoints.DefaultIfEmpty().Sum(x => x.AbsoluteRequestTime);
                     tmp.Processed = true;
-                    var requests = tmp.EndPoints.SelectMany(x => x.Requests);
-                    Parallel.ForEach(fromTimes,
-                        x =>
-                        {
-                            tmp.Requests.Add(CalculateNodeTimeSteps(x, analyzeSpan,
-                                requests));
-                        });
+                    var requests = tmp.EndPoints.SelectMany(x => x._concurrentRequests);
+                    if (model.FromTime != null)
+                    {
+                        Parallel.ForEach(fromTimes,
+                            x =>
+                            {
+                                tmp._concurrentRequests.Add(CalculateNodeTimeSteps(x, analyzeSpan,
+                                    requests));
+                            });
+                    }
                 }
             }
+            Stopwatches["NodePro"].Stop();
             _Nodes.ForEach(x => x.Processed = false);
             result.EndPoint = "";
             result.Processed = true;
@@ -121,7 +151,11 @@ namespace lokiloggerreporter.Services.Implementation
                     tmpNode.Processed = true;
                 }
             }
-            
+            foreach (var keyValuePair in Stopwatches)
+            {
+                Console.WriteLine($"{keyValuePair.Key} \t {keyValuePair.Value.ElapsedMilliseconds}");
+            }
+            Console.WriteLine("LogsCount:     " + logs.Count);
             return result;
         }
 
