@@ -62,7 +62,7 @@ namespace lokiloggerreporter.Services.Implementation
             {
                 fromTimes.Add((DateTime)model.FromTime+(analyzeSpan* i));
                 i++;
-            } while (fromTimes.Last() < model.ToTime);
+            } while (fromTimes.Last() <= model.ToTime);
             result = AddLogToLogs(logs, result);
             GetNodes(result,true);
             foreach (var endPointUsage in _Leaves)
@@ -110,7 +110,7 @@ namespace lokiloggerreporter.Services.Implementation
                 }
             }
             _Nodes.ForEach(x => x.Processed = false);
-            result.EndPoint = "/";
+            result.EndPoint = "";
             result.Processed = true;
             while (_Nodes.Any(x => !x.Processed))
             {
