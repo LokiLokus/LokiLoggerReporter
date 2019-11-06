@@ -23,7 +23,7 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int MaximumRequestTime { get; set; }
         public int MedianRequestTime { get; set; }
 [JsonIgnore]
-        public ConcurrentBag<RequestAnalyzeModel> _concurrentRequests { get; set; } = new ConcurrentBag<RequestAnalyzeModel>();
+        public List<RequestAnalyzeModel> _concurrentRequests { get; set; } = new List<RequestAnalyzeModel>();
         public List<RequestAnalyzeModel> Requests { get
             {
                 return _concurrentRequests.ToList().OrderBy(x => x.FromTime).ToList();
