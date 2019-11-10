@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -77,7 +78,7 @@ namespace lokiloggerreporter.Services.Implementation
             TimeSpan analyzeSpan = TimeSpan.Zero;
             List<DateTime> fromTimes = new List<DateTime>();
             if(model.FromTime != null){
-                analyzeSpan = ((DateTime) model.ToTime - (DateTime) model.FromTime) / 400;
+                analyzeSpan = ((DateTime) model.ToTime - (DateTime) model.FromTime) / 500;
                 int i = 1;
                 do
                 {
@@ -111,24 +112,16 @@ namespace lokiloggerreporter.Services.Implementation
                     if (model.FromTime != null)
                     {
                         
-                        fromTimes.ForEach(
-                            x =>
-                            {
-                                if (x < firstLog)
-                                {
-                                    endPointUsage._concurrentRequests.Add(new RequestAnalyzeModel()
-                                    {
-                                        FromTime = x,
-                                        ToTime = x + analyzeSpan
-                                    });
-                                }
-                                else
-                                {
-                                    endPointUsage._concurrentRequests.Add(CalculateLeaveTimeSteps(x, analyzeSpan,
-                                        endPointUsage.WebRequests));
-                                }
-                                
-                            });
+                        Dictionary<DateTime,List<WebRequest>> preorderdCache = new Dictionary<DateTime, List<WebRequest>>();
+                        int splitSize = 25;
+                        foreach (var dateTime in fromTimes.SplitList(splitSize))
+                        {
+                            preorderdCache.Add(dateTime.FirstOrDefault(),endPointUsage.WebRequests.Where(x => x.Start >= dateTime.FirstOrDefault() && x.Start <= dateTime.Last()).ToList());
+                        }
+                        foreach (var x in fromTimes)
+                        {
+                            endPointUsage._concurrentRequests.Add(CalculateLeaveTimeSteps(x, analyzeSpan,preorderdCache.Where(d => d.Key >= x- analyzeSpan*splitSize && d.Key <= x+analyzeSpan*splitSize).SelectMany(z => z.Value).ToList()));
+                        }
                     }
                 }
 
@@ -141,8 +134,8 @@ namespace lokiloggerreporter.Services.Implementation
 
             while (_Nodes.Any(x => !x.Processed))
             {
-                IEnumerable<EndPointUsage> nodes = _Nodes.Where(x => !x.Processed && x.EndPoints.All(z => z.Processed));
-                Parallel.ForEach(nodes, tmp =>
+                List<EndPointUsage> nodes = _Nodes.Where(x => !x.Processed && x.EndPoints.All(z => z.Processed)).ToList();
+                nodes.ForEach(tmp =>
                 {
                     tmp.RequestCount = tmp.EndPoints.Sum(x => x.RequestCount);
                     tmp.ErrorCount = tmp.EndPoints.Sum(x => x.RequestCount);
@@ -152,26 +145,19 @@ namespace lokiloggerreporter.Services.Implementation
                     tmp.MedianRequestTime = (int) tmp.EndPoints.DefaultIfEmpty().Median(x => x.MedianRequestTime);
                     tmp.AbsoluteRequestTime = (long) tmp.EndPoints.DefaultIfEmpty().Sum(x => x.AbsoluteRequestTime);
                     tmp.Processed = true;
-                    var requests = tmp.EndPoints.SelectMany(x => x._concurrentRequests);
+                    var requests = tmp.EndPoints.SelectMany(x => x._concurrentRequests).ToList();
                     if (model.FromTime != null)
                     {
-                        fromTimes.ForEach(
-                            x =>
-                            {
-                                if (x < firstLog)
-                                {
-                                    tmp._concurrentRequests.Add(new RequestAnalyzeModel()
-                                    {
-                                        FromTime = x,
-                                        ToTime = x + analyzeSpan
-                                    });
-                                }
-                                else
-                                {
-                                    tmp._concurrentRequests.Add(CalculateNodeTimeSteps(x, analyzeSpan,
-                                        requests));
-                                }
-                            });
+                        Dictionary<DateTime,List<RequestAnalyzeModel>> preorderdCache = new Dictionary<DateTime, List<RequestAnalyzeModel>>();
+                        int splitSize = 25;
+                        foreach (var dateTime in fromTimes.SplitList(splitSize))
+                        {
+                            preorderdCache.Add(dateTime.FirstOrDefault(),requests.Where(x => x.FromTime >= dateTime.FirstOrDefault() && x.FromTime <= dateTime.Last()).ToList());
+                        }
+                        foreach (var x in fromTimes)
+                        {
+                            tmp._concurrentRequests.Add(CalculateNodeTimeSteps(x, analyzeSpan,preorderdCache.Where(d => d.Key >= x- analyzeSpan*splitSize && d.Key <= x+analyzeSpan*splitSize).SelectMany(z => z.Value).ToList()));
+                        }
                     }
                 });
             }
@@ -200,12 +186,12 @@ namespace lokiloggerreporter.Services.Implementation
         {
             DateTime toTime = from + span;
             RequestAnalyzeModel result = new RequestAnalyzeModel();
-            var requestsInTIme = requests.Where(x => x.FromTime >= from && x.ToTime <= toTime);
+            var requestsInTime = requests.Where(x => x.FromTime >= from && x.ToTime <= toTime).ToList();
             result.FromTime = from;
             result.ToTime = toTime;
-            result.ErrorCount = requestsInTIme.Sum(x => x.ErrorCount);
-            result.RequestCount = requestsInTIme.Sum(x => x.RequestCount);
-            result.InterestingRequestModel = requestsInTIme.SelectMany(x => x.InterestingRequestModel).Take(50).ToList();
+            result.ErrorCount = requestsInTime.Sum(x => x.ErrorCount);
+            result.RequestCount = requestsInTime.Sum(x => x.RequestCount);
+            result.InterestingRequestModel = requestsInTime.SelectMany(x => x.InterestingRequestModel).Take(5).ToList();
             return result;
         }
 
@@ -278,17 +264,3 @@ namespace lokiloggerreporter.Services.Implementation
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

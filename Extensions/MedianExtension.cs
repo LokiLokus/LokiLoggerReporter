@@ -7,6 +7,11 @@ namespace lokiloggerreporter.Extensions
     public static class MedianExtensions
 {
     
+    public static IEnumerable<T> GetNth<T>(this IList<T> list, int n)
+    {
+        for (int i = 0; i < list.Count;i += n)
+            yield return list[i];
+    }
     public static IEnumerable<List<T>> SplitList<T>(this List<T> locations, int nSize=30)  
     {        
         for (int i = 0; i < locations.Count; i += nSize) 
