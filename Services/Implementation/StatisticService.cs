@@ -29,11 +29,11 @@ namespace lokiloggerreporter.Services.Implementation
             //I know Joins are nice, but this is faster
 
             Stopwatches["ObtainLogs"] = Stopwatch.StartNew();
-            var logs = DatabaseCtx.WebRequest.Where(x => DatabaseCtx.Logs.Where(z => z.SourceId == model.SourceId && 
+            var logs = await DatabaseCtx.WebRequest.Where(x => DatabaseCtx.Logs.Where(z => z.SourceId == model.SourceId && 
                                                                                      (model.FromTime == null || x.Start >= model.FromTime) &&
                                                                                      (model.ToTime == null || x.Start <= model.ToTime)&&
                                                                                      z.LogTyp == LogTyp.RestCall
-                                                                                     ).Any(z => z.WebRequestId == x.WebRequestId)).ToList();
+                                                                                     ).Any(z => z.WebRequestId == x.WebRequestId)).ToListAsync();
             
             Stopwatches["ObtainLogs"].Stop();
             EndPointUsage result = new EndPointUsage();
