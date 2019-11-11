@@ -45,7 +45,7 @@ namespace lokiloggerreporter.Rest
                     return Ok(model);
                 }
 
-                return BadRequest(OperationResult.Failed("Name", "Same Source already exists"));
+                return BadRequest(OperationResult.Failed("Name", "Same Source already exists").Errors);
             }
 
             return BadRequest(ModelState);
@@ -69,7 +69,7 @@ namespace lokiloggerreporter.Rest
                     return Ok(model);
                 }
 
-                return BadRequest(OperationResult.Failed("Name", "Source doesn't exists"));
+                return BadRequest(OperationResult.Failed("Name", "Source doesn't exists").Errors);
             }
 
             return BadRequest(ModelState);
