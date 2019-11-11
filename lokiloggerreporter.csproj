@@ -16,7 +16,23 @@
 
   <ItemGroup>
     <Folder Include="Services\Interfaces" />
-    <Folder Include="wwwroot" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="clientapp\dist\manifest.json" />
+    <_ContentIncludedByDefault Remove="clientapp\package-lock.json" />
+    <_ContentIncludedByDefault Remove="clientapp\package.json" />
+    <_ContentIncludedByDefault Remove="clientapp\public\manifest.json" />
+    <_ContentIncludedByDefault Remove="clientapp\tsconfig.json" />
+    <_ContentIncludedByDefault Remove="Views\Home\AnalyzeSource.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Home\RestAnalyzer.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Home\Source.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Home\Table.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\Navigation.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\_ViewImports.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\_ViewStart.cshtml" />
   </ItemGroup>
 
 </Project>
