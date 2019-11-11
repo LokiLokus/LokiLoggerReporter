@@ -78,13 +78,13 @@ namespace lokiloggerreporter.Services.Implementation
             TimeSpan analyzeSpan = TimeSpan.Zero;
             List<DateTime> fromTimes = new List<DateTime>();
             if(model.FromTime != null){
-                analyzeSpan = ((DateTime) model.ToTime - (DateTime) model.FromTime) / 500;
+                analyzeSpan = ((DateTime) model.ToTime - (DateTime) model.FromTime) / model.Resolution;
                 int i = 1;
                 do
                 {
                     fromTimes.Add((DateTime)model.FromTime+(analyzeSpan* i));
                     i++;
-                } while (fromTimes.Last() <= model.ToTime);
+                } while (fromTimes.Last() < model.ToTime);
             }
             
             Stopwatches["AddLogs"] = Stopwatch.StartNew();
@@ -149,7 +149,7 @@ namespace lokiloggerreporter.Services.Implementation
                     if (model.FromTime != null)
                     {
                         Dictionary<DateTime,List<RequestAnalyzeModel>> preorderdCache = new Dictionary<DateTime, List<RequestAnalyzeModel>>();
-                        int splitSize = 25;
+                        int splitSize = 50;
                         foreach (var dateTime in fromTimes.SplitList(splitSize))
                         {
                             preorderdCache.Add(dateTime.FirstOrDefault(),requests.Where(x => x.FromTime >= dateTime.FirstOrDefault() && x.FromTime <= dateTime.Last()).ToList());

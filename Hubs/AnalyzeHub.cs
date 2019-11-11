@@ -106,6 +106,7 @@ namespace lokiloggerreporter.Hubs
         public string ExcludePath { get; set; }
 
         public int? ThreadId { get; set; }
+        public int Resolution { get; set; } = 500;
     }
 
     public class ReturnData
