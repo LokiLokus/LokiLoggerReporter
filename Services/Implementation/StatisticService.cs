@@ -120,7 +120,13 @@ namespace lokiloggerreporter.Services.Implementation
                         }
                         foreach (var x in fromTimes)
                         {
-                            endPointUsage._concurrentRequests.Add(CalculateLeaveTimeSteps(x, analyzeSpan,preorderdCache.Where(d => d.Key >= x- analyzeSpan*splitSize && d.Key <= x+analyzeSpan*splitSize).SelectMany(z => z.Value).ToList()));
+                            var tmpData = CalculateLeaveTimeSteps(x, analyzeSpan,
+                                preorderdCache
+                                    .Where(d => d.Key >= x - analyzeSpan * splitSize &&
+                                                d.Key <= x + analyzeSpan * splitSize).SelectMany(z => z.Value)
+                                    .ToList());
+                            if(tmpData.RequestCount != 0)
+                                endPointUsage._concurrentRequests.Add(tmpData);
                         }
                     }
                 }
@@ -156,7 +162,13 @@ namespace lokiloggerreporter.Services.Implementation
                         }
                         foreach (var x in fromTimes)
                         {
-                            tmp._concurrentRequests.Add(CalculateNodeTimeSteps(x, analyzeSpan,preorderdCache.Where(d => d.Key >= x- analyzeSpan*splitSize && d.Key <= x+analyzeSpan*splitSize).SelectMany(z => z.Value).ToList()));
+                            var tmpData = CalculateNodeTimeSteps(x, analyzeSpan,
+                                preorderdCache
+                                    .Where(d => d.Key >= x - analyzeSpan * splitSize &&
+                                                d.Key <= x + analyzeSpan * splitSize).SelectMany(z => z.Value)
+                                    .ToList());
+                            if(tmpData.RequestCount != 0)
+                                tmp._concurrentRequests.Add(tmpData);
                         }
                     }
                 });
