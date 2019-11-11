@@ -125,9 +125,28 @@ namespace lokiloggerreporter.Services.Implementation
                                     .Where(d => d.Key >= x - analyzeSpan * splitSize &&
                                                 d.Key <= x + analyzeSpan * splitSize).SelectMany(z => z.Value)
                                     .ToList());
-                            if(tmpData.RequestCount != 0)
-                                endPointUsage._concurrentRequests.Add(tmpData);
+                            endPointUsage._concurrentRequests.Add(tmpData);
                         }
+
+                        var first = endPointUsage._concurrentRequests.First();
+                        
+                        var toRemove =  new List<RequestAnalyzeModel>();
+                        for (int i = 1; i < endPointUsage._concurrentRequests.Count-1; i++)
+                        {
+                            if (first.RequestCount == 0 && endPointUsage._concurrentRequests[i].RequestCount == 0)
+                            {
+                                if (endPointUsage._concurrentRequests[i + 1].RequestCount == 0)
+                                {
+                                    toRemove.Add(endPointUsage._concurrentRequests[i]);
+                                }
+                            }
+
+                            first = endPointUsage._concurrentRequests[i];
+                        }
+                        endPointUsage._concurrentRequests.RemoveAll(x => toRemove.Contains(x));
+                        
+                        
+                        
                     }
                 }
 
@@ -167,9 +186,25 @@ namespace lokiloggerreporter.Services.Implementation
                                     .Where(d => d.Key >= x - analyzeSpan * splitSize &&
                                                 d.Key <= x + analyzeSpan * splitSize).SelectMany(z => z.Value)
                                     .ToList());
-                            if(tmpData.RequestCount != 0)
-                                tmp._concurrentRequests.Add(tmpData);
+                            tmp._concurrentRequests.Add(tmpData);
                         }
+                        
+                        var first = tmp._concurrentRequests.First();
+                        
+                        var toRemove =  new List<RequestAnalyzeModel>();
+                        for (int i = 1; i < tmp._concurrentRequests.Count-1; i++)
+                        {
+                            if (first.RequestCount == 0 && tmp._concurrentRequests[i].RequestCount == 0)
+                            {
+                                if (tmp._concurrentRequests[i + 1].RequestCount == 0)
+                                {
+                                    toRemove.Add(tmp._concurrentRequests[i]);
+                                }
+                            }
+
+                            first = tmp._concurrentRequests[i];
+                        }
+                        tmp._concurrentRequests.RemoveAll(x => toRemove.Contains(x));
                     }
                 });
             }
