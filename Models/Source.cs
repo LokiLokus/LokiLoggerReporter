@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using lokiloggerreporter.Middleware;
 
 namespace lokiloggerreporter.Models
 {
@@ -12,7 +13,8 @@ namespace lokiloggerreporter.Models
         public string Name { get; set; }
         public string Version { get; set; }
         public string Tag { get; set; }
-        
+        [NotMapped]
+        public string LogUrl => UrlObtainer.AppBaseUrl + "/api/Logging/Log/" + SourceId;
         public string Description { get; set; }
         public string Secret { get; set; }
     }

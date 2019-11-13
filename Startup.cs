@@ -2,6 +2,7 @@
 using lokiloggerreporter.Config;
 using lokiloggerreporter.Extensions;
 using lokiloggerreporter.Hubs;
+using lokiloggerreporter.Middleware;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
 using lokiloggerreporter.Services.Implementation;
@@ -75,12 +76,13 @@ namespace lokiloggerreporter {
 			services.AddSingleton<ISettingsService, SettingService>();
 			services.AddTransient<RestAnalyzeService, RestAnalyzeService>();
 			services.AddSignalR();
+			services.AddUrlObtainer();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
 		{
-			
+			app.UseUrlObtainer();
 			app.UseCors(builder => builder
 				.AllowAnyOrigin()
 				.AllowAnyMethod()
