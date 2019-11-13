@@ -58,6 +58,5 @@ namespace lokiloggerreporter.ViewModel.Statistic
         
         public List<WebRequest> ErrorRequests = new List<WebRequest>();
         public List<WebRequest> SlowestRequests = new List<WebRequest>();
-        public List<WebRequest> InterestingRequestModel { get; set; } = new List<WebRequest>();
     }
 }
