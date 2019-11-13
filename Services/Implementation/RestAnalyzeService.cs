@@ -236,7 +236,12 @@ namespace lokiloggerreporter.Services.Implementation
             var requestsInTime = requests.Where(x => x.FromTime >= from && x.ToTime <= toTime).ToList();
             result.FromTime = from;
             result.ToTime = toTime;
-            result.ErrorCount = requestsInTime.Sum(x => x.ErrorCount);
+            result.Request100Count = requestsInTime.Sum(x => x.Request100Count);
+            result.Request200Count = requestsInTime.Sum(x => x.Request200Count);
+            result.Request300Count = requestsInTime.Sum(x => x.Request300Count);
+            result.Request400Count = requestsInTime.Sum(x => x.Request400Count);
+            result.Request500Count = requestsInTime.Sum(x => x.Request500Count);
+            result.Request900Count = requestsInTime.Sum(x => x.Request900Count);
             result.RequestCount = requestsInTime.Sum(x => x.RequestCount);
             result.InterestingRequestModel = requestsInTime.SelectMany(x => x.InterestingRequestModel).Take(5).ToList();
             return result;
@@ -245,14 +250,19 @@ namespace lokiloggerreporter.Services.Implementation
         private RequestAnalyzeModel CalculateLeaveTimeSteps(DateTime from, TimeSpan span, List<WebRequest> webRequests)
         {
             DateTime toTime = from + span;
-            var requestsInTIme = webRequests.Where(x => x.Start >= from && x.Start <= toTime);
+            var requestsInTime = webRequests.Where(x => x.Start >= from && x.Start <= toTime);
             RequestAnalyzeModel result = new RequestAnalyzeModel
             {
                 FromTime = @from,
                 ToTime = toTime,
-                ErrorCount = requestsInTIme.Count(x => !x.IsStatusCodeSucceded),
-                RequestCount = requestsInTIme.Count(),
-                InterestingRequestModel = requestsInTIme.Where(x => !x.IsStatusCodeSucceded).Take(10).ToList()
+                Request100Count = requestsInTime.Count(x => x.StatusCode >= 0 && x.StatusCode <= 199),
+                Request200Count = requestsInTime.Count(x => x.StatusCode >= 200 && x.StatusCode <= 299),
+                Request300Count = requestsInTime.Count(x => x.StatusCode >= 300 && x.StatusCode <= 399),
+                Request400Count = requestsInTime.Count(x => x.StatusCode >= 400 && x.StatusCode <= 499),
+                Request500Count = requestsInTime.Count(x => x.StatusCode >= 500 && x.StatusCode <= 599),
+                Request900Count = requestsInTime.Count(x => x.StatusCode >= 600),
+                RequestCount = requestsInTime.Count(),
+                InterestingRequestModel = requestsInTime.Where(x => !x.IsStatusCodeSucceded).Take(10).ToList()
             };
             return result;
         }

@@ -47,7 +47,13 @@ namespace lokiloggerreporter.ViewModel.Statistic
             }
         }
 
-        public int ErrorCount { get; set; }
+        public int Request100Count { get; set; }
+        public int Request200Count { get; set; }
+        public int Request300Count { get; set; }
+        public int Request400Count { get; set; }
+        public int Request500Count { get; set; }
+        public int Request900Count { get; set; }
+        
         public int RequestCount { get; set; }
         
         public List<WebRequest> ErrorRequests = new List<WebRequest>();
