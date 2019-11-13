@@ -22,7 +22,7 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int MinimumRequestTime { get; set; }
         public int MaximumRequestTime { get; set; }
         public int MedianRequestTime { get; set; }
-[JsonIgnore]
+        [JsonIgnore]
         public List<RequestAnalyzeModel> _concurrentRequests { get; set; } = new List<RequestAnalyzeModel>();
         public List<RequestAnalyzeModel> Requests { get
             {
@@ -50,6 +50,8 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int ErrorCount { get; set; }
         public int RequestCount { get; set; }
         
+        public List<WebRequest> ErrorRequests = new List<WebRequest>();
+        public List<WebRequest> SlowestRequests = new List<WebRequest>();
         public List<WebRequest> InterestingRequestModel { get; set; } = new List<WebRequest>();
     }
 }
