@@ -8,7 +8,7 @@ namespace lokiloggerreporter.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string SourceId { get; set; }
-
+        [Required(ErrorMessage = "A Source Name must be defined")]
         public string Name { get; set; }
         public string Version { get; set; }
         public string Tag { get; set; }
