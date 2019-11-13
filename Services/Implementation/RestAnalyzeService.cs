@@ -14,12 +14,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions.Internal;
 
 namespace lokiloggerreporter.Services.Implementation
 {
-    public class StatisticService
+    public class RestAnalyzeService
     {
         public DatabaseCtx DatabaseCtx { get; set; }
         public Dictionary<string,Stopwatch> Stopwatches { get; set; } = new Dictionary<string, Stopwatch>();
 
-        public StatisticService(DatabaseCtx databaseCtx)
+        public RestAnalyzeService(DatabaseCtx databaseCtx)
         {
             DatabaseCtx = databaseCtx;
         }

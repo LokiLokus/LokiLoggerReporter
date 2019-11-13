@@ -73,7 +73,7 @@ namespace lokiloggerreporter {
 			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 			services.AddSingleton<ISettingsService, SettingService>();
-			services.AddTransient<StatisticService, StatisticService>();
+			services.AddTransient<RestAnalyzeService, RestAnalyzeService>();
 			services.AddSignalR();
 		}
 

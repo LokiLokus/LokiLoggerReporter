@@ -7,17 +7,17 @@ namespace lokiloggerreporter.Rest
 {
     public class StatisticRest: Controller
     {
-        public StatisticService StatisticService { get; set; }
+        public RestAnalyzeService RestAnalyzeService { get; set; }
 
-        public StatisticRest(StatisticService statisticService)
+        public StatisticRest(RestAnalyzeService restAnalyzeService)
         {
-            StatisticService = statisticService;
+            RestAnalyzeService = restAnalyzeService;
         }
 
         [HttpPost("GetStatistic")]
         public async Task<IActionResult> GetStatistic([FromBody] RequestModel model)
         {
-            return Ok(await StatisticService.GetEndPointUsageStatistic(model));
+            return Ok(await RestAnalyzeService.GetEndPointUsageStatistic(model));
         }
     }
 }

@@ -6,11 +6,11 @@ namespace lokiloggerreporter.Rest
 {
     public class RestCallUsageRest:Controller
     {
-        public StatisticService StatisticService { get; set; }
+        public RestAnalyzeService RestAnalyzeService { get; set; }
 
-        public RestCallUsageRest(StatisticService service)
+        public RestCallUsageRest(RestAnalyzeService service)
         {
-            StatisticService = service;
+            RestAnalyzeService = service;
         }
         
         [HttpGet("EndPointsFromSource/{sourceId}")]

@@ -12,10 +12,10 @@ namespace lokiloggerreporter.Hubs
 {
     public class AnalyzeHub : Hub
     {
-        public StatisticService StatisticService { get; set; }
-        public AnalyzeHub(DatabaseCtx db,StatisticService service)
+        public RestAnalyzeService RestAnalyzeService { get; set; }
+        public AnalyzeHub(DatabaseCtx db,RestAnalyzeService service)
         {
-            StatisticService = service;
+            RestAnalyzeService = service;
             DatabaseCtx = db;
         }
 
@@ -24,7 +24,7 @@ namespace lokiloggerreporter.Hubs
         public async Task<EndPointUsage> RequestAnalyseUsage(RequestModel model)
         {
 
-            return await StatisticService.GetEndPointUsageStatistic(model);
+            return await RestAnalyzeService.GetEndPointUsageStatistic(model);
         }
         
 
