@@ -244,7 +244,7 @@ namespace lokiloggerreporter.Services.Implementation
             result.Request500Count = requestsInTime.Sum(x => x.Request500Count);
             result.Request900Count = requestsInTime.Sum(x => x.Request900Count);
             result.RequestCount = requestsInTime.Sum(x => x.RequestCount);
-            result.SlowestRequests = requestsInTime.SelectMany(x => x.SlowestRequests).Take(10).ToList();
+            result.SlowestRequests = requestsInTime.SelectMany(x => x.SlowestRequests).OrderByDescending(x => x.End-x.Start)F.Take(10).ToList();
             result.ErrorRequests = requestsInTime.SelectMany(x => x.ErrorRequests).Take(10).ToList();
             return result;
         }
