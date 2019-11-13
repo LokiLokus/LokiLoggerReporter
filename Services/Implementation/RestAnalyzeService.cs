@@ -60,6 +60,7 @@ namespace lokiloggerreporter.Services.Implementation
                         tmp.EndPoints.Add(ttmp);
                         
                     }
+                    ttmp.EndPoints = ttmp.EndPoints.OrderBy(x => x.EndPoint).ToList();
 
                     tmp = ttmp;
                 }
