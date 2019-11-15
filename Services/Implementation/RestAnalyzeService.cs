@@ -32,6 +32,7 @@ namespace lokiloggerreporter.Services.Implementation
             var logs = await DatabaseCtx.WebRequest.Where(x => DatabaseCtx.Logs.Where(z => z.SourceId == model.SourceId && 
                                                                                      (model.FromTime == null || x.Start >= model.FromTime) &&
                                                                                      (model.ToTime == null || x.Start <= model.ToTime)&&
+                                                                                     (model.Ignore404 == false || x.StatusCode == 404)&&
                                                                                      z.LogTyp == LogTyp.RestCall
                                                                                      ).Any(z => z.WebRequestId == x.WebRequestId)).ToListAsync();
             

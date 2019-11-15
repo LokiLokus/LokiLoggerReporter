@@ -107,6 +107,7 @@ namespace lokiloggerreporter.Hubs
 
         public int? ThreadId { get; set; }
         public int Resolution { get; set; } = 500;
+        public bool Ignore404 { get; set; } = true;
     }
 
     public class ReturnData
