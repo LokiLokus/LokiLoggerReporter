@@ -24,7 +24,7 @@ namespace lokiloggerreporter.Services.Implementation
             DatabaseCtx = databaseCtx;
         }
 
-        public async Task<EndPointUsage> GetEndPointUsageStatistic(RequestModel model)
+        public async Task<EndPointUsage> GetEndPointUsageStatistic(RestAnalyzeRequestModel model)
         {
             //I know Joins are nice, but this is faster
 

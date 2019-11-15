@@ -21,7 +21,7 @@ namespace lokiloggerreporter.Hubs
 
         public DatabaseCtx DatabaseCtx { get; set; }
 
-        public async Task<EndPointUsage> RequestAnalyseUsage(RequestModel model)
+        public async Task<EndPointUsage> RequestAnalyseUsage(RestAnalyzeRequestModel model)
         {
 
             return await RestAnalyzeService.GetEndPointUsageStatistic(model);
