@@ -245,8 +245,6 @@ namespace lokiloggerreporter.Services.Implementation
             result.Request500Count = requestsInTime.Sum(x => x.Request500Count);
             result.Request900Count = requestsInTime.Sum(x => x.Request900Count);
             result.RequestCount = requestsInTime.Sum(x => x.RequestCount);
-            result.SlowestRequests = requestsInTime.SelectMany(x => x.SlowestRequests).OrderByDescending(x => x.End-x.Start).Take(10).ToList();
-            result.ErrorRequests = requestsInTime.SelectMany(x => x.ErrorRequests).Take(5).ToList();
             return result;
         }
 
@@ -265,8 +263,6 @@ namespace lokiloggerreporter.Services.Implementation
                 Request500Count = requestsInTime.Count(x => x.StatusCode >= 500 && x.StatusCode <= 599),
                 Request900Count = requestsInTime.Count(x => x.StatusCode >= 600),
                 RequestCount = requestsInTime.Count(),
-                ErrorRequests = requestsInTime.Where(x =>!x.IsStatusCodeSucceded).Take(10).ToList(),
-                SlowestRequests = requestsInTime.OrderByDescending(x => x.End-x.Start).Take(10).ToList(),
             };
             return result;
         }
@@ -274,8 +270,6 @@ namespace lokiloggerreporter.Services.Implementation
         private List<EndPointUsage> _Leaves = new List<EndPointUsage>();
         private List<EndPointUsage> _Nodes = new List<EndPointUsage>();
 
-        
-        
         private void GetNodes(EndPointUsage endPointUsage,bool onlyLeaves)
         {
             if(!onlyLeaves)_Nodes.Add(endPointUsage);

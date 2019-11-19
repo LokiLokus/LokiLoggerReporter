@@ -24,10 +24,6 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int MedianRequestTime { get; set; }
         [JsonIgnore]
         public List<RequestAnalyzeModel> _concurrentRequests { get; set; } = new List<RequestAnalyzeModel>();
-        public List<RequestAnalyzeModel> Requests { get
-            {
-                return _concurrentRequests.ToList().OrderBy(x => x.FromTime).ToList();
-            }}
         [JsonIgnore] public bool Processed { get; set; }
         public long AbsoluteRequestTime { get; set; }
     }
@@ -55,8 +51,5 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int Request900Count { get; set; }
         
         public int RequestCount { get; set; }
-        
-        public List<WebRequest> ErrorRequests = new List<WebRequest>();
-        public List<WebRequest> SlowestRequests = new List<WebRequest>();
     }
 }
