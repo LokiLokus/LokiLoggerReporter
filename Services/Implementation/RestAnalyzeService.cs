@@ -99,23 +99,11 @@ namespace lokiloggerreporter.Services.Implementation
             {
                 if (endPointUsage.WebRequests.Count != 0)
                 {
-                    endPointUsage.AverageRequestTime = (int) endPointUsage.WebRequests.DefaultIfEmpty()
-                        .Average(x => (x.End - x.Start).Ticks);
-                    endPointUsage.MaximumRequestTime =
-                        (int) endPointUsage.WebRequests.DefaultIfEmpty().Max(x => (x.End - x.Start).Ticks);
-                    endPointUsage.MinimumRequestTime =
-                        (int) endPointUsage.WebRequests.DefaultIfEmpty().Min(x => (x.End - x.Start).Ticks);
-                    endPointUsage.MedianRequestTime = (int) endPointUsage.WebRequests.DefaultIfEmpty()
-                        .Median(x => (x.End - x.Start).Ticks);
-                    endPointUsage.AbsoluteRequestTime =
-                        (long) endPointUsage.WebRequests.DefaultIfEmpty().Sum(x => (x.End - x.Start).Ticks);
-                    endPointUsage.RequestCount = endPointUsage.WebRequests.Count;
-                    endPointUsage.ErrorCount = endPointUsage.WebRequests.Where(x => x.StatusCode >= 400).Count();
                     if (model.FromTime != null)
                     {
                         
                         Dictionary<DateTime,List<WebRequest>> preorderdCache = new Dictionary<DateTime, List<WebRequest>>();
-                        int splitSize = 25;
+                        int splitSize = (int)(model.Resolution / 10);
                         foreach (var dateTime in fromTimes.SplitList(splitSize))
                         {
                             preorderdCache.Add(dateTime.FirstOrDefault(),endPointUsage.WebRequests.Where(x => x.Start >= dateTime.FirstOrDefault() && x.Start <= dateTime.Last()).ToList());
@@ -127,25 +115,23 @@ namespace lokiloggerreporter.Services.Implementation
                                     .Where(d => d.Key >= x - analyzeSpan * splitSize &&
                                                 d.Key <= x + analyzeSpan * splitSize).SelectMany(z => z.Value)
                                     .ToList());
-                            endPointUsage._concurrentRequests.Add(tmpData);
+                            endPointUsage.TimeSlots.Add(tmpData);
                         }
 
-                        var first = endPointUsage._concurrentRequests.First();
+                        var first = endPointUsage.TimeSlots.First();
                         
                         var toRemove =  new List<RequestAnalyzeModel>();
-                        for (int i = 1; i < endPointUsage._concurrentRequests.Count-1; i++)
+                        for (int i = 1; i < endPointUsage.TimeSlots.Count-1; i++)
                         {
-                            if (first.RequestCount == 0 && endPointUsage._concurrentRequests[i].RequestCount == 0)
+                            if (!first.AnyRequest && !endPointUsage.TimeSlots[i].AnyRequest)
                             {
-                                if (endPointUsage._concurrentRequests[i + 1].RequestCount == 0)
-                                {
-                                    toRemove.Add(endPointUsage._concurrentRequests[i]);
+                                if(!endPointUsage.TimeSlots[i + 1].AnyRequest){
+                                    toRemove.Add(endPointUsage.TimeSlots[i]);
                                 }
                             }
-
-                            first = endPointUsage._concurrentRequests[i];
+                            first = endPointUsage.TimeSlots[i];
                         }
-                        endPointUsage._concurrentRequests.RemoveAll(x => toRemove.Contains(x));
+                        endPointUsage.TimeSlots.RemoveAll(x => toRemove.Contains(x));
                         
                         
                         
@@ -164,19 +150,12 @@ namespace lokiloggerreporter.Services.Implementation
                 List<EndPointUsage> nodes = _Nodes.Where(x => !x.Processed && x.EndPoints.All(z => z.Processed)).ToList();
                 nodes.ForEach(tmp =>
                 {
-                    tmp.RequestCount = tmp.EndPoints.Sum(x => x.RequestCount);
-                    tmp.ErrorCount = tmp.EndPoints.Sum(x => x.RequestCount);
-                    tmp.AverageRequestTime = (int) tmp.EndPoints.DefaultIfEmpty().Average(x => x.AverageRequestTime);
-                    tmp.MaximumRequestTime = (int) tmp.EndPoints.DefaultIfEmpty().Max(x => x.MaximumRequestTime);
-                    tmp.MinimumRequestTime = (int) tmp.EndPoints.DefaultIfEmpty().Min(x => x.MinimumRequestTime);
-                    tmp.MedianRequestTime = (int) tmp.EndPoints.DefaultIfEmpty().Median(x => x.MedianRequestTime);
-                    tmp.AbsoluteRequestTime = (long) tmp.EndPoints.DefaultIfEmpty().Sum(x => x.AbsoluteRequestTime);
                     tmp.Processed = true;
-                    var requests = tmp.EndPoints.SelectMany(x => x._concurrentRequests).ToList();
+                    var requests = tmp.EndPoints.SelectMany(x => x.TimeSlots).ToList();
                     if (model.FromTime != null)
                     {
                         Dictionary<DateTime,List<RequestAnalyzeModel>> preorderdCache = new Dictionary<DateTime, List<RequestAnalyzeModel>>();
-                        int splitSize = 50;
+                        int splitSize = (int)(model.Resolution/10);
                         foreach (var dateTime in fromTimes.SplitList(splitSize))
                         {
                             preorderdCache.Add(dateTime.FirstOrDefault(),requests.Where(x => x.FromTime >= dateTime.FirstOrDefault() && x.FromTime <= dateTime.Last()).ToList());
@@ -188,25 +167,25 @@ namespace lokiloggerreporter.Services.Implementation
                                     .Where(d => d.Key >= x - analyzeSpan * splitSize &&
                                                 d.Key <= x + analyzeSpan * splitSize).SelectMany(z => z.Value)
                                     .ToList());
-                            tmp._concurrentRequests.Add(tmpData);
+                            tmp.TimeSlots.Add(tmpData);
                         }
                         
-                        var first = tmp._concurrentRequests.First();
+                        var first = tmp.TimeSlots.First();
                         
                         var toRemove =  new List<RequestAnalyzeModel>();
-                        for (int i = 1; i < tmp._concurrentRequests.Count-1; i++)
+                        for (int i = 1; i < tmp.TimeSlots.Count-1; i++)
                         {
-                            if (first.RequestCount == 0 && tmp._concurrentRequests[i].RequestCount == 0)
+                            if (!first.AnyRequest && !tmp.TimeSlots[i].AnyRequest)
                             {
-                                if (tmp._concurrentRequests[i + 1].RequestCount == 0)
+                                if (!tmp.TimeSlots[i + 1].AnyRequest)
                                 {
-                                    toRemove.Add(tmp._concurrentRequests[i]);
+                                    toRemove.Add(tmp.TimeSlots[i]);
                                 }
                             }
 
-                            first = tmp._concurrentRequests[i];
+                            first = tmp.TimeSlots[i];
                         }
-                        tmp._concurrentRequests.RemoveAll(x => toRemove.Contains(x));
+                        tmp.TimeSlots.RemoveAll(x => toRemove.Contains(x));
                     }
                 });
             }
@@ -237,6 +216,14 @@ namespace lokiloggerreporter.Services.Implementation
             DateTime toTime = from + span;
             RequestAnalyzeModel result = new RequestAnalyzeModel();
             var requestsInTime = requests.Where(x => x.FromTime >= from && x.ToTime <= toTime).ToList();
+            if (!requestsInTime.Any())
+            {
+                return new RequestAnalyzeModel()
+                {
+                    FromTime = @from,
+                    ToTime = toTime,
+                };
+            }
             result.FromTime = from;
             result.ToTime = toTime;
             result.Request100Count = requestsInTime.Sum(x => x.Request100Count);
@@ -245,14 +232,30 @@ namespace lokiloggerreporter.Services.Implementation
             result.Request400Count = requestsInTime.Sum(x => x.Request400Count);
             result.Request500Count = requestsInTime.Sum(x => x.Request500Count);
             result.Request900Count = requestsInTime.Sum(x => x.Request900Count);
-            result.RequestCount = requestsInTime.Sum(x => x.RequestCount);
+            if (requestsInTime.Any())
+            {
+                result.AverageRequestTime = (int) requestsInTime.DefaultIfEmpty().Average(x => x.AverageRequestTime);
+                result.MinimumRequestTime = (int) requestsInTime.DefaultIfEmpty().Min(x => x.MinimumRequestTime);
+                result.MaximumRequestTime = (int) requestsInTime.DefaultIfEmpty().Max(x => x.MaximumRequestTime);
+                result.MedianRequestTime = (int) requestsInTime.DefaultIfEmpty().Median(x => x.MedianRequestTime);
+                result.AbsoluteRequestTime = (int) requestsInTime.DefaultIfEmpty().Sum(x => x.AbsoluteRequestTime);
+            }
+
             return result;
         }
 
         private RequestAnalyzeModel CalculateLeaveTimeSteps(DateTime from, TimeSpan span, List<WebRequest> webRequests)
         {
             DateTime toTime = from + span;
-            var requestsInTime = webRequests.Where(x => x.Start >= from && x.Start <= toTime);
+            var requestsInTime = webRequests.Where(x => x.Start >= from && x.Start <= toTime).ToList();
+            if (!requestsInTime.Any())
+            {
+                return new RequestAnalyzeModel()
+                {
+                    FromTime = @from,
+                    ToTime = toTime,
+                };
+            }
             RequestAnalyzeModel result = new RequestAnalyzeModel
             {
                 FromTime = @from,
@@ -262,9 +265,17 @@ namespace lokiloggerreporter.Services.Implementation
                 Request300Count = requestsInTime.Count(x => x.StatusCode >= 300 && x.StatusCode <= 399),
                 Request400Count = requestsInTime.Count(x => x.StatusCode >= 400 && x.StatusCode <= 499),
                 Request500Count = requestsInTime.Count(x => x.StatusCode >= 500 && x.StatusCode <= 599),
-                Request900Count = requestsInTime.Count(x => x.StatusCode >= 600),
-                RequestCount = requestsInTime.Count(),
+                Request900Count = requestsInTime.Count(x => x.StatusCode >= 600)
             };
+            if (requestsInTime.Any())
+            {
+                result.AverageRequestTime = (int)requestsInTime.DefaultIfEmpty().Average(x => (x.End-x.Start).Ticks);
+                result.MinimumRequestTime = (int)requestsInTime.DefaultIfEmpty().Min(x => (x.End-x.Start).Ticks);
+                result.MaximumRequestTime = (int)requestsInTime.DefaultIfEmpty().Max(x => (x.End-x.Start).Ticks);
+                result.MedianRequestTime = (int)requestsInTime.DefaultIfEmpty().Median(x => (x.End-x.Start).Ticks);
+                result.AbsoluteRequestTime = (int)requestsInTime.DefaultIfEmpty().Sum(x => (x.End-x.Start).Ticks);
+            }
+            
             return result;
         }
 

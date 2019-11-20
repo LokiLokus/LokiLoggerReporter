@@ -16,16 +16,9 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public string EndPoint { get; set; }
         [JsonIgnore]
         public List<WebRequest> WebRequests { get; set; } = new List<WebRequest>();
-        public int RequestCount { get; set; }
-        public int ErrorCount { get; set; }
-        public int AverageRequestTime { get; set; }
-        public int MinimumRequestTime { get; set; }
-        public int MaximumRequestTime { get; set; }
-        public int MedianRequestTime { get; set; }
-        [JsonIgnore]
-        public List<RequestAnalyzeModel> _concurrentRequests { get; set; } = new List<RequestAnalyzeModel>();
+
+        public List<RequestAnalyzeModel> TimeSlots { get; set; } = new List<RequestAnalyzeModel>();
         [JsonIgnore] public bool Processed { get; set; }
-        public long AbsoluteRequestTime { get; set; }
     }
 
     public class RequestAnalyzeModel
@@ -49,7 +42,15 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int Request400Count { get; set; }
         public int Request500Count { get; set; }
         public int Request900Count { get; set; }
-        
-        public int RequestCount { get; set; }
+        [JsonIgnore]
+        public bool AnyRequest =>
+            !(Request100Count == 0 && Request200Count == 0 && Request300Count == 0 && Request400Count == 0 &&
+              Request500Count == 0 && Request900Count == 0);
+
+        public int AverageRequestTime { get; set; }
+        public int MinimumRequestTime { get; set; }
+        public int MaximumRequestTime { get; set; }
+        public int MedianRequestTime { get; set; }
+        public long AbsoluteRequestTime { get; set; }
     }
 }
