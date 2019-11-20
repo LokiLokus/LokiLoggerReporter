@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using lokiloggerreporter.Hubs;
 using lokiloggerreporter.Services.Implementation;
+using lokiloggerreporter.ViewModel.Statistic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lokiloggerreporter.Rest
@@ -15,7 +16,7 @@ namespace lokiloggerreporter.Rest
         }
 
         [HttpPost("GetStatistic")]
-        public async Task<IActionResult> GetStatistic([FromBody] RequestModel model)
+        public async Task<IActionResult> GetStatistic([FromBody] RestAnalyzeRequestModel model)
         {
             return Ok(await RestAnalyzeService.GetEndPointUsageStatistic(model));
         }
