@@ -84,30 +84,11 @@ namespace lokiloggerreporter.Hubs
         public bool Exec { get; set; }
         public bool Rest { get; set; }
 
-        public string ExcludeAll { get; set; }
-        public string IncludeAll { get; set; }
-
-        public string IncludeData { get; set; }
-        public string ExcludeData { get; set; }
-
-
         public string IncludeRest { get; set; }
         public string ExcludeRest { get; set; }
 
-        public string IncludeException { get; set; }
-        public string ExcludeException { get; set; }
-
         public string SourceId { get; set; }
-
-        public string IncludeClass { get; set; }
-        public string ExcludeClass { get; set; }
-
-        public string IncludePath { get; set; }
-        public string ExcludePath { get; set; }
-
         public int? ThreadId { get; set; }
-        public int Resolution { get; set; } = 500;
-        public bool Ignore404 { get; set; } = true;
     }
 
     public class ReturnData
