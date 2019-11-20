@@ -33,7 +33,7 @@ namespace lokiloggerreporter.Services.Implementation
                                                                                      (model.FromTime == null || x.Start >= model.FromTime) &&
                                                                                      (model.ToTime == null || x.Start <= model.ToTime)&&
                                                                                      z.LogTyp == LogTyp.RestCall
-                                                                                     ).Any(z => z.WebRequestId == x.WebRequestId)).ToListAsync();
+                                                                                     ).Any(z => z.WebRequestId == x.WebRequestId)).AsNoTracking().ToListAsync();
             
             Stopwatches["ObtainLogs"].Stop();
             EndPointUsage result = new EndPointUsage();
