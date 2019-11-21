@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lokiloggerreporter", "LokiLoggerReporter\lokiloggerreporter.csproj", "{27A5210F-2D0F-4259-999E-74078F71CCEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,17 @@ Global
 		{27A5210F-2D0F-4259-999E-74078F71CCEF}.Release|x64.Build.0 = Release|Any CPU
 		{27A5210F-2D0F-4259-999E-74078F71CCEF}.Release|x86.ActiveCfg = Release|Any CPU
 		{27A5210F-2D0F-4259-999E-74078F71CCEF}.Release|x86.Build.0 = Release|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Debug|x64.Build.0 = Debug|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Debug|x86.Build.0 = Debug|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Release|x64.ActiveCfg = Release|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Release|x64.Build.0 = Release|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Release|x86.ActiveCfg = Release|Any CPU
+		{5049E299-E5EC-4328-B1AC-3ABBFC01A12A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

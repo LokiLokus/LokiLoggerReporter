@@ -207,6 +207,7 @@ namespace lokiloggerreporter.Services.Implementation
                 Console.WriteLine($"{keyValuePair.Key} \t {keyValuePair.Value.ElapsedMilliseconds}");
             }
             Console.WriteLine("LogsCount:     " + logs.Count());
+            Console.WriteLine("");
             result.EndPoint = "/";
             return result;
         }

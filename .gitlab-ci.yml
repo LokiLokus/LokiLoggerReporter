@@ -15,7 +15,7 @@ runProject:
   script:
     - mkdir /lokilogger
     - cp -r * /lokilogger
-    - cd /lokilogger
+    - cd /lokilogger/LokiLoggerReporter
     - rm appsettings.json ||true
     - cp /appsettings.json appsettings.json
     - systemctl start lokilogger 
