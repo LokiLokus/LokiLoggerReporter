@@ -132,9 +132,6 @@ namespace lokiloggerreporter.Services.Implementation
                             first = endPointUsage.TimeSlots[i];
                         }
                         endPointUsage.TimeSlots.RemoveAll(x => toRemove.Contains(x));
-                        
-                        
-                        
                     }
                 }
 
