@@ -97,42 +97,36 @@ namespace lokiloggerreporter.Services.Implementation
             Stopwatches["LeaveOb"] = Stopwatch.StartNew();
             Parallel.ForEach(_Leaves, endPointUsage =>
             {
-                if (endPointUsage.WebRequests.Count != 0)
+                
+                if (model.FromTime != null)
                 {
-                    if (model.FromTime != null)
+                    /*
+                    Dictionary<DateTime,List<WebRequest>> preorderdCache = new Dictionary<DateTime, List<WebRequest>>();
+                    int splitSize = (int)(model.Resolution / 10);
+                    foreach (var dateTime in fromTimes.SplitList(splitSize))
                     {
-                        
-                        Dictionary<DateTime,List<WebRequest>> preorderdCache = new Dictionary<DateTime, List<WebRequest>>();
-                        int splitSize = (int)(model.Resolution / 10);
-                        foreach (var dateTime in fromTimes.SplitList(splitSize))
-                        {
-                            preorderdCache.Add(dateTime.FirstOrDefault(),endPointUsage.WebRequests.Where(x => x.Start >= dateTime.FirstOrDefault() && x.Start <= dateTime.Last()).ToList());
-                        }
-                        foreach (var x in fromTimes)
-                        {
-                            var tmpData = CalculateLeaveTimeSteps(x, analyzeSpan,
-                                preorderdCache
-                                    .Where(d => d.Key >= x - analyzeSpan * splitSize &&
-                                                d.Key <= x + analyzeSpan * splitSize).SelectMany(z => z.Value)
-                                    .ToList());
-                            endPointUsage.TimeSlots.Add(tmpData);
-                        }
-
-                        var first = endPointUsage.TimeSlots.First();
-                        
-                        var toRemove =  new List<RequestAnalyzeModel>();
-                        for (int i = 1; i < endPointUsage.TimeSlots.Count-1; i++)
-                        {
-                            if (!first.AnyRequest && !endPointUsage.TimeSlots[i].AnyRequest)
-                            {
-                                if(!endPointUsage.TimeSlots[i + 1].AnyRequest){
-                                    toRemove.Add(endPointUsage.TimeSlots[i]);
-                                }
-                            }
-                            first = endPointUsage.TimeSlots[i];
-                        }
-                        endPointUsage.TimeSlots.RemoveAll(x => toRemove.Contains(x));
+                        preorderdCache.Add(dateTime.FirstOrDefault(),endPointUsage.WebRequests.Where(x => x.Start >= dateTime.FirstOrDefault() && x.Start <= dateTime.Last()).ToList());
+                    }*/
+                    foreach (var x in fromTimes)
+                    {
+                        var tmpData = CalculateLeaveTimeSteps(x, analyzeSpan,endPointUsage.WebRequests);
+                        endPointUsage.TimeSlots.Add(tmpData);
                     }
+                    
+                    var first = endPointUsage.TimeSlots.First();
+                    
+                    var toRemove =  new List<RequestAnalyzeModel>();
+                    for (int i = 1; i < endPointUsage.TimeSlots.Count-1; i++)
+                    {
+                        if (!first.AnyRequest && !endPointUsage.TimeSlots[i].AnyRequest)
+                        {
+                            if(!endPointUsage.TimeSlots[i + 1].AnyRequest){
+                                toRemove.Add(endPointUsage.TimeSlots[i]);
+                            }
+                        }
+                        first = endPointUsage.TimeSlots[i];
+                    }
+                    endPointUsage.TimeSlots.RemoveAll(x => toRemove.Contains(x));
                 }
 
                 endPointUsage.Processed = true;
@@ -151,21 +145,19 @@ namespace lokiloggerreporter.Services.Implementation
                     var requests = tmp.EndPoints.SelectMany(x => x.TimeSlots).ToList();
                     if (model.FromTime != null)
                     {
+                        foreach (var x in fromTimes)
+                        {
+                            var tmpData = CalculateNodeTimeSteps(x, analyzeSpan,requests);
+                            tmp.TimeSlots.Add(tmpData);
+                        }
+                        /*
                         Dictionary<DateTime,List<RequestAnalyzeModel>> preorderdCache = new Dictionary<DateTime, List<RequestAnalyzeModel>>();
                         int splitSize = (int)(model.Resolution/10);
                         foreach (var dateTime in fromTimes.SplitList(splitSize))
                         {
                             preorderdCache.Add(dateTime.FirstOrDefault(),requests.Where(x => x.FromTime >= dateTime.FirstOrDefault() && x.FromTime <= dateTime.Last()).ToList());
-                        }
-                        foreach (var x in fromTimes)
-                        {
-                            var tmpData = CalculateNodeTimeSteps(x, analyzeSpan,
-                                preorderdCache
-                                    .Where(d => d.Key >= x - analyzeSpan * splitSize &&
-                                                d.Key <= x + analyzeSpan * splitSize).SelectMany(z => z.Value)
-                                    .ToList());
-                            tmp.TimeSlots.Add(tmpData);
-                        }
+                        }*/
+                        
                         
                         var first = tmp.TimeSlots.First();
                         
@@ -214,14 +206,6 @@ namespace lokiloggerreporter.Services.Implementation
             DateTime toTime = from + span;
             RequestAnalyzeModel result = new RequestAnalyzeModel();
             var requestsInTime = requests.Where(x => x.FromTime >= from && x.ToTime <= toTime).ToList();
-            if (!requestsInTime.Any())
-            {
-                return new RequestAnalyzeModel()
-                {
-                    FromTime = @from,
-                    ToTime = toTime,
-                };
-            }
             result.FromTime = from;
             result.ToTime = toTime;
             result.Request100Count = requestsInTime.Sum(x => x.Request100Count);
@@ -246,14 +230,7 @@ namespace lokiloggerreporter.Services.Implementation
         {
             DateTime toTime = from + span;
             var requestsInTime = webRequests.Where(x => x.Start >= from && x.Start <= toTime).ToList();
-            if (!requestsInTime.Any())
-            {
-                return new RequestAnalyzeModel()
-                {
-                    FromTime = @from,
-                    ToTime = toTime,
-                };
-            }
+
             RequestAnalyzeModel result = new RequestAnalyzeModel
             {
                 FromTime = @from,
@@ -321,7 +298,7 @@ namespace lokiloggerreporter.Services.Implementation
 
         private List<List<string>> ObtainEndPoints(List<WebRequest> logs)
         {
-            IEnumerable<List<string>> endpoints = logs.AsParallel().DistinctBy(x => x.Path).Select(x => x.Path).Select(x =>{
+            IEnumerable<List<string>> endpoints = logs.DistinctBy(x => x.Path).Select(x => x.Path).Select(x =>{
                 if(x == null) return new List<string>();
                 return x.Split("/", StringSplitOptions.None).ToList();
             });
