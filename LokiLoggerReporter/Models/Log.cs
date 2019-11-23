@@ -38,7 +38,7 @@ namespace lokiloggerreporter.Models {
 		RestCall
 	}
 	public enum LogLevel {
-		Verbose,
+		SystemGenerated,
 		Debug,
 		Information,
 		Warning,

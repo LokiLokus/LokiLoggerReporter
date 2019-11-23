@@ -14,10 +14,10 @@ namespace lokiloggerreporter.Rest
             LogsObtainerService = service;
         }
 
-        [HttpPost("SearchLogs")]
-        public async Task<IActionResult> SearchLogs([FromBody] RequestModel model)
+        [HttpPost("SearchWebRequests")]
+        public async Task<IActionResult> SearchWebRequests([FromBody] WebRequestModel model)
         {
-            return Ok(await LogsObtainerService.ObtainLogs(model));
+            return Ok(await LogsObtainerService.ObtainWebRequests(model));
         }
     }
 }

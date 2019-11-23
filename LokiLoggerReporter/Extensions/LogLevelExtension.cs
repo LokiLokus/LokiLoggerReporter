@@ -8,7 +8,7 @@ namespace lokiloggerreporter.Extensions {
 		{
 			return new List<LogLevel>()
 			{
-				LogLevel.Verbose,
+				LogLevel.SystemGenerated,
 				LogLevel.Debug,
 				LogLevel.Information,
 				LogLevel.Warning,

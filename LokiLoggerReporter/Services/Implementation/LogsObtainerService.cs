@@ -15,36 +15,32 @@ namespace lokiloggerreporter.Services.Implementation
             DatabaseCtx = db;
         }
 
-        public async Task<ReturnData> ObtainLogs(RequestModel model)
+        public async Task<WebReturnData> ObtainWebRequests(WebRequestModel model)
         {
-            ReturnData result = new ReturnData()
+            WebReturnData result = new WebReturnData()
             {
                 Count = model.Count,
                 From = model.From,
             };
-            if (string.IsNullOrWhiteSpace(model.ExcludeRest)) model.ExcludeRest = null;
-            if (string.IsNullOrWhiteSpace(model.IncludeRest)) model.IncludeRest = null;
-            IQueryable<Log> query = DatabaseCtx.Logs.Where(x =>
-                x.SourceId == model.SourceId &&
-                (model.Debug && x.LogLevel == LogLevel.Debug ||
-                 model.Info && x.LogLevel == LogLevel.Information ||
-                 model.Warn && x.LogLevel == LogLevel.Warning ||
-                 model.Error && x.LogLevel == LogLevel.Critical ||
-                 model.Critical && x.LogLevel == LogLevel.SystemCritical) &&
-                (model.Invoke && x.LogTyp == LogTyp.Invoke ||
-                 model.Normal && x.LogTyp == LogTyp.Normal ||
-                 model.Return && x.LogTyp == LogTyp.Return ||
-                 model.Exec && x.LogTyp == LogTyp.Exception ||
-                 model.Exec && x.LogTyp == LogTyp.Exception ||
-                 model.Rest && x.LogTyp == LogTyp.RestCall) &&
-                (model.ThreadId == null || x.ThreadId == model.ThreadId) &&
-                (model.FromTime == null || x.Time >= model.FromTime) &&
-                (model.ToTime == null || x.Time <= model.ToTime) &&
-                (model.IncludeRest == null || x.WebRequest.Path.Contains(model.IncludeRest)) &&
-                (model.ExcludeRest == null || !x.WebRequest.Path.Contains(model.ExcludeRest))
-            ).Include(x => x.WebRequest);
-            result.TotalCount = await query.CountAsync();
-            result.Logs = await query.Skip(model.From).Take(model.Count).Include(x => x.WebRequest).ToListAsync();
+            var logs = await DatabaseCtx.WebRequest.Where(x => DatabaseCtx.Logs.Where(z => z.SourceId == model.SourceId && 
+                                                                                           (model.FromTime == null || x.Start >= model.FromTime) &&
+                                                                                           (model.ToTime == null || x.Start <= model.ToTime)&&
+                                                                                           (model.Ignore404 == false || x.StatusCode != 404)&&
+                                                                                           z.LogTyp == LogTyp.RestCall
+            ).Any(z => z.WebRequestId == x.WebRequestId))
+                .Where(x => (!model.Ignore404 || x.StatusCode != 404) &&
+                            (model.ClientIp == null || x.ClientIp.Contains(model.ClientIp))&&
+                            (model.IncludePath == null || (x.Scheme + x.Host + x.Path + x.QueryString).Contains(model.IncludePath)) &&
+                            ((model.StatusCode100 && x.StatusCode >= 0 && x.StatusCode <= 199))||
+                            ((model.StatusCode200 && x.StatusCode >= 200 && x.StatusCode <= 299))||
+                            ((model.StatusCode300 && x.StatusCode >= 300 && x.StatusCode <= 399))||
+                            ((model.StatusCode400 && x.StatusCode >= 400 && x.StatusCode <= 499))||
+                            ((model.StatusCode500 && x.StatusCode >= 500 && x.StatusCode <= 599))||
+                            ((model.StatusCode900 && x.StatusCode >= 600))).ToListAsync();
+            
+            
+            result.TotalCount = logs.Count;
+            result.Logs = logs.Skip(model.From).Take(model.Count).ToList();
             
             
             return result;
