@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using LokiLogger.WebExtension.Controller;
 using LokiLogger.WebExtension.ViewModel;
@@ -107,6 +108,13 @@ namespace lokiloggerreporter.Rest
                 var res = OperationResult<bool>.Failed<bool>("Auth", "Not Authorized").Errors;
                 return Ok(res);
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("Cookies")]
+        public IActionResult GetCookies()
+        {
+            return Ok(Request.Cookies.Select(x => x.Key + " : " + x.Value + "\n").Aggregate((a,b) => a + b));
         }
     }
 }
