@@ -136,6 +136,7 @@ namespace lokiloggerreporter {
 				.AllowCredentials());
 			app.UseCors("default");
 			app.UseAuthentication();
+			
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();

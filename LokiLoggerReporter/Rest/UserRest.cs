@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LokiLogger.WebExtension.Controller;
@@ -114,7 +115,11 @@ namespace lokiloggerreporter.Rest
         [HttpGet("Cookies")]
         public IActionResult GetCookies()
         {
-            return Ok(Request.Cookies.Select(x => x.Key + " : " + x.Value + "\n").Aggregate((a,b) => a + b));
+            var result = new List<string>()
+            {
+                Request.Cookies.Select(x => x.Key + " : " + x.Value + "\n").Aggregate((a, b) => a + b)
+            };
+            return Ok(result);
         }
     }
 }
