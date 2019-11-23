@@ -115,11 +115,15 @@ namespace lokiloggerreporter.Rest
         [HttpGet("Cookies")]
         public IActionResult GetCookies()
         {
-            var result = new List<string>()
-            {
-                Request.Cookies.Select(x => x.Key + " : " + x.Value + "\n").Aggregate((a, b) => a + b)
-            };
-            return Ok(result);
+            if(Request.Cookies.Count != 0){
+                var result = new List<string>()
+                {
+                    Request.Cookies.Select(x => x.Key + " : " + x.Value + "\n").Aggregate((a, b) => a + b)
+                };
+                return Ok(result);
+            }
+
+            return Ok();
         }
     }
 }

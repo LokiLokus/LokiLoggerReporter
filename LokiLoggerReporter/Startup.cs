@@ -89,22 +89,6 @@ namespace lokiloggerreporter {
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 			
-			services.AddCors(options =>
-			{
-				options.AddPolicy("stuff",
-					builder =>
-					{
-						builder.WithOrigins("*")
-							.AllowAnyHeader()
-							.AllowAnyMethod();
-					});
-			});
-			services.Configure<CookiePolicyOptions>(options =>
-			{
-				options.CheckConsentNeeded = context => true;
-				options.MinimumSameSitePolicy = SameSiteMode.None;
-			});
-
 
 			services.AddSwaggerGen(c =>
 			{
@@ -129,13 +113,14 @@ namespace lokiloggerreporter {
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
 		{
 			app.UseUrlObtainer();
+			app.UseAuthentication();
 			app.UseCors(builder => builder
 				.AllowAnyOrigin()
 				.AllowAnyMethod()
 				.AllowAnyHeader()
-				.AllowCredentials());
-			app.UseCors("default");
-			app.UseAuthentication();
+				.AllowCredentials()
+				.WithHeaders()
+				);
 			
 			if (env.IsDevelopment())
 			{
