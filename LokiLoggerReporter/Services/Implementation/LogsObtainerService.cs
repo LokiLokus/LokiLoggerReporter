@@ -36,7 +36,7 @@ namespace lokiloggerreporter.Services.Implementation
                             ((model.StatusCode300 && x.StatusCode >= 300 && x.StatusCode <= 399))||
                             ((model.StatusCode400 && x.StatusCode >= 400 && x.StatusCode <= 499))||
                             ((model.StatusCode500 && x.StatusCode >= 500 && x.StatusCode <= 599))||
-                            ((model.StatusCode900 && x.StatusCode >= 600))).ToListAsync();
+                            ((model.StatusCode900 && x.StatusCode >= 600))).OrderBy(x => x.Start).ToListAsync();
             
             
             result.TotalCount = logs.Count;
