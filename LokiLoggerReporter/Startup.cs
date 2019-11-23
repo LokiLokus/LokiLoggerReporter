@@ -75,6 +75,7 @@ namespace lokiloggerreporter {
 
 			services.AddSingleton<ISettingsService, SettingService>();
 			services.AddTransient<RestAnalyzeService, RestAnalyzeService>();
+			services.AddTransient<LogsObtainerService, LogsObtainerService>();
 			services.AddSignalR();
 			services.AddUrlObtainer();
 		}

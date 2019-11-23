@@ -6,6 +6,7 @@ namespace lokiloggerreporter.Services {
 		private Dictionary<string, object> dataStorage = new Dictionary<string, object>();
 		
 		
+		
 		public T Get<T>(string key)
 		{
 			if (dataStorage.ContainsKey(key))
