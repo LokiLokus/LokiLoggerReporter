@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LokiLogger.WebExtension.ViewModel;
 using lokiloggerreporter.Extensions;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
@@ -45,7 +46,7 @@ namespace lokiloggerreporter.Rest
                     return Ok(model);
                 }
 
-                return BadRequest(OperationResult.Failed("Name", "Same Source already exists").Errors);
+                return BadRequest(OperationResult.Fail<bool>("Name", "Same Source already exists").Errors);
             }
 
             return BadRequest(ModelState);
@@ -69,7 +70,7 @@ namespace lokiloggerreporter.Rest
                     return Ok(model);
                 }
 
-                return BadRequest(OperationResult.Failed("Name", "Source doesn't exists").Errors);
+                return BadRequest(OperationResult.Fail<bool>("Name", "Source doesn't exists").Errors);
             }
 
             return BadRequest(ModelState);

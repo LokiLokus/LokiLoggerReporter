@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Identity;
 
 namespace lokiloggerreporter.ViewModel
-{
+{/*
     public class OperationResult : OperationResult<object> {
 	}
 
@@ -116,6 +116,6 @@ namespace lokiloggerreporter.ViewModel
 		{
 			return new OperationOutput(code, desc);
 		}
-	}
+	}*/
 
 }

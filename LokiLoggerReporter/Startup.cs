@@ -6,11 +6,14 @@ using lokiloggerreporter.Middleware;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
 using lokiloggerreporter.Services.Implementation;
+using lokiloggerreporter.ViewModel.User;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -30,12 +33,15 @@ namespace lokiloggerreporter {
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			
+			var identitySettings = IdentitySetting.Default();
+			var cookieSettings = CookieSetting.Default();
+			
 			DatabaseSettings databaseSettings = GetSettings<DatabaseSettings>("DatabaseSettings");
 
 			if (databaseSettings.DatabaseTyp == "inmemory")
 			{
 				services.AddDbContext<DatabaseCtx>(opt => opt.UseInMemoryDatabase(databaseSettings.ConnectionString));
-
 			}else if (databaseSettings.DatabaseTyp.ToLower() == "mysql")
 			{
 				services.AddDbContext<DatabaseCtx>(opt => opt.UseMySql(databaseSettings.ConnectionString));
@@ -43,6 +49,45 @@ namespace lokiloggerreporter {
 			{
 				services.AddDbContext<DatabaseCtx>(opt => opt.UseSqlite(databaseSettings.ConnectionString));
 			}
+            
+            
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<DatabaseCtx>()
+                .AddDefaultTokenProviders();
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = identitySettings.Password.RequireDigit;
+                options.Password.RequiredLength = identitySettings.Password.RequiredLength;
+                options.Password.RequireLowercase = identitySettings.Password.RequireLowercase;
+                options.Password.RequireNonAlphanumeric = identitySettings.Password.RequireNonAlphanumeric;
+                options.Password.RequireUppercase = identitySettings.Password.RequireUppercase;
+
+                options.Lockout.AllowedForNewUsers = identitySettings.Lockout.AllowedForNewUsers;
+                options.Lockout.DefaultLockoutTimeSpan =
+                    TimeSpan.FromMinutes(identitySettings.Lockout.DefaultLockoutTimeSpanInMins);
+                options.Lockout.MaxFailedAccessAttempts = identitySettings.Lockout.MaxFailedAccessAttempts;
+
+                options.User.RequireUniqueEmail = identitySettings.User.RequireUniqueEmail;
+
+                options.SignIn.RequireConfirmedEmail = identitySettings.SignIn.RequireConfirmedEmail;
+                options.SignIn.RequireConfirmedPhoneNumber = identitySettings.SignIn.RequireConfirmedPhoneNumber;
+
+            });
+            
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = cookieSettings.LoginPath;
+                options.LogoutPath = cookieSettings.LogoutPath;
+                options.AccessDeniedPath = cookieSettings.AccessDeniedPath;
+                options.SlidingExpiration = cookieSettings.SlidingExpiration;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(cookieSettings.ExpireTimeSpanInMin);
+            });
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
 			
 			services.AddCors(options =>
 			{
@@ -56,7 +101,6 @@ namespace lokiloggerreporter {
 			});
 			services.Configure<CookiePolicyOptions>(options =>
 			{
-				// This lambda determines whether user consent for non-essential cookies is needed for a given request.
 				options.CheckConsentNeeded = context => true;
 				options.MinimumSameSitePolicy = SameSiteMode.None;
 			});
@@ -76,6 +120,7 @@ namespace lokiloggerreporter {
 			services.AddSingleton<ISettingsService, SettingService>();
 			services.AddTransient<RestAnalyzeService, RestAnalyzeService>();
 			services.AddTransient<LogsObtainerService, LogsObtainerService>();
+			services.AddTransient<UserService, UserService>();
 			services.AddSignalR();
 			services.AddUrlObtainer();
 		}
@@ -90,6 +135,7 @@ namespace lokiloggerreporter {
 				.AllowAnyHeader()
 				.AllowCredentials());
 			app.UseCors("default");
+			app.UseAuthentication();
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
@@ -121,6 +167,21 @@ namespace lokiloggerreporter {
 					"{controller=Home}/{action=Index}/{id?}");
 			});
 			var ctx = serviceProvider.GetRequiredService<DatabaseCtx>();
+			var userService =  serviceProvider.GetService<UserService>();
+			var roleManager =  serviceProvider.GetService<RoleManager<IdentityRole>>();
+			bool existsAdmin = roleManager.RoleExistsAsync("Admin").Result;
+			if (!existsAdmin)
+			{
+				roleManager.CreateAsync(new IdentityRole("Admin")).Wait();
+			}
+			if(!userService.GetAllUser().SuccessResult.Any()){
+				userService.CreateUser(new UserCreateModel()
+				{
+					Password = "1234",
+					IsAdmin = true,
+					UserName = "Admin"
+				}).Wait();
+			}
 		}
 		
 		private T GetSettings<T>(string section)

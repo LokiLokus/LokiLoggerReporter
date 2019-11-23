@@ -1,7 +1,8 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace lokiloggerreporter.Models {
-	public class DatabaseCtx :DbContext{
+	public class DatabaseCtx :IdentityDbContext<User>{
 
 		public DatabaseCtx(DbContextOptions options) : base(options)
 		{
