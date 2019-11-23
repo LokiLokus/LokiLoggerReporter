@@ -43,8 +43,8 @@ namespace lokiloggerreporter.ViewModel.Statistic
         public int Request500Count { get; set; }
         public int Request900Count { get; set; }
         [JsonIgnore]
-        public bool AnyRequest =>
-            MinimumRequestTime > 0;
+        public bool AnyRequest => (Request100Count + Request200Count + Request300Count + Request400Count +
+                                  Request500Count + Request900Count) != 0;
 
         public int AverageRequestTime { get; set; }
         public int MinimumRequestTime { get; set; }

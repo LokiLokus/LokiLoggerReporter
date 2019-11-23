@@ -107,12 +107,12 @@ namespace lokiloggerreporter.Services.Implementation
                         endPointUsage.TimeSlots.Add(tmpData);
                     }
                     /*
-                                        Dictionary<DateTime,List<WebRequest>> preorderdCache = new Dictionary<DateTime, List<WebRequest>>();
-                                        int splitSize = (int)(model.Resolution / 10);
-                                        foreach (var dateTime in fromTimes.SplitList(splitSize))
-                                        {
-                                            preorderdCache.Add(dateTime.FirstOrDefault(),endPointUsage.WebRequests.Where(x => x.Start >= dateTime.FirstOrDefault() && x.Start <= dateTime.Last()).ToList());
-                                        }
+                    Dictionary<DateTime,List<WebRequest>> preorderdCache = new Dictionary<DateTime, List<WebRequest>>();
+                    int splitSize = (int)(model.Resolution / 10);
+                    foreach (var dateTime in fromTimes.SplitList(splitSize))
+                    {
+                        preorderdCache.Add(dateTime.FirstOrDefault(),endPointUsage.WebRequests.Where(x => x.Start >= dateTime.FirstOrDefault() && x.Start <= dateTime.Last()).ToList());
+                    }*/
                     var first = endPointUsage.TimeSlots.First();
                     
                     var toRemove =  new List<RequestAnalyzeModel>();
@@ -126,7 +126,7 @@ namespace lokiloggerreporter.Services.Implementation
                         }
                         first = endPointUsage.TimeSlots[i];
                     }
-                    endPointUsage.TimeSlots.RemoveAll(x => toRemove.Contains(x));*/
+                    endPointUsage.TimeSlots.RemoveAll(x => toRemove.Contains(x));
                 }
 
                 endPointUsage.Processed = true;
@@ -157,7 +157,7 @@ namespace lokiloggerreporter.Services.Implementation
                         {
                             preorderdCache.Add(dateTime.FirstOrDefault(),requests.Where(x => x.FromTime >= dateTime.FirstOrDefault() && x.FromTime <= dateTime.Last()).ToList());
                         }
-                        
+                        */
                         
                         var first = tmp.TimeSlots.First();
                         
@@ -174,7 +174,7 @@ namespace lokiloggerreporter.Services.Implementation
 
                             first = tmp.TimeSlots[i];
                         }
-                        tmp.TimeSlots.RemoveAll(x => toRemove.Contains(x));*/
+                        tmp.TimeSlots.RemoveAll(x => toRemove.Contains(x));
                     }
                 });
             }
