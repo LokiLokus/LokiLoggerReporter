@@ -1,9 +1,11 @@
 using lokiloggerreporter.Services.Implementation;
 using lokiloggerreporter.ViewModel.Statistic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lokiloggerreporter.Rest
 {
+    [Authorize]
     public class RestCallUsageRest:Controller
     {
         public RestAnalyzeService RestAnalyzeService { get; set; }

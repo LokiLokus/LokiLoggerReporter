@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -96,14 +97,14 @@ namespace lokiloggerreporter.Rest {
 			return Ok(DateTime.Now);
 		}
 
-		
+		[Authorize]
 		[HttpGet("GetLogBySourceDate/{source}/{from}&{to}")]
 		public async Task<ActionResult> GetLogBySource([FromRoute] string source,[FromRoute]DateTime from,[FromRoute] DateTime to)
 		{
 			return Ok(DatabaseCtx.Logs.Where(x => x.Time >= from && x.Time <= to)
 				.Where(x => x.SourceId == source).OrderByDescending(x => x.Time).ToList());
 		}
-		
+		[Authorize]
 		[HttpGet("GetLogBySource/{source}/{offset}-{take}")]
 		public async Task<ActionResult> GetLogBySource([FromRoute] string source,[FromRoute]int offset = 0,[FromRoute] int take = 100)
 		{

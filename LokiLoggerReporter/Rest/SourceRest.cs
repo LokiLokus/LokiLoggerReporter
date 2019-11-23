@@ -7,6 +7,7 @@ using lokiloggerreporter.Extensions;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
 using lokiloggerreporter.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -14,6 +15,7 @@ namespace lokiloggerreporter.Rest
 {
     [Route("api/Source")]
     [ApiController]
+    [Authorize]
     public class SourceRest : Controller
     {
         public SourceRest(DatabaseCtx dctx, ISettingsService settingsService)
