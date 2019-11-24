@@ -115,6 +115,7 @@ namespace lokiloggerreporter.Rest
         [HttpGet("Cookies")]
         public IActionResult GetCookies()
         {
+            if (User.Identity.IsAuthenticated) return Ok("AUTH");
             if(Request.Cookies.Count != 0){
                 var result = new List<string>()
                 {
