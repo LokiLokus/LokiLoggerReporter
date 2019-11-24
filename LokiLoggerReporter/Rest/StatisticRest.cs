@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace lokiloggerreporter.Rest
 {
-    [Authorize]
     public class StatisticRest: Controller
     {
         public RestAnalyzeService RestAnalyzeService { get; set; }

@@ -15,7 +15,6 @@ namespace lokiloggerreporter.Rest
 {
     [Route("api/Source")]
     [ApiController]
-    [Authorize]
     public class SourceRest : Controller
     {
         public SourceRest(DatabaseCtx dctx, ISettingsService settingsService)

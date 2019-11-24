@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace lokiloggerreporter.Rest
 {
-    [Authorize]
     public class LogObtainerRest:Controller
     {
         public LogsObtainerService LogsObtainerService { get; set; }

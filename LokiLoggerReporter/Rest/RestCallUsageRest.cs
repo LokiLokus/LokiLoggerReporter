@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace lokiloggerreporter.Rest
 {
-    [Authorize]
     public class RestCallUsageRest:Controller
     {
         public RestAnalyzeService RestAnalyzeService { get; set; }
