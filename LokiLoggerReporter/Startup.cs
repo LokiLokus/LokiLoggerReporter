@@ -8,6 +8,7 @@ using lokiloggerreporter.Services;
 using lokiloggerreporter.Services.Implementation;
 using lokiloggerreporter.ViewModel.User;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -54,6 +55,7 @@ namespace lokiloggerreporter {
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<DatabaseCtx>()
                 .AddDefaultTokenProviders();
+            
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequireDigit = identitySettings.Password.RequireDigit;
@@ -85,10 +87,17 @@ namespace lokiloggerreporter {
 
             services.Configure<CookiePolicyOptions>(options =>
             {
+	            options.HttpOnly = HttpOnlyPolicy.None;
                 options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.MinimumSameSitePolicy = SameSiteMode.Lax;
             });
 			
+            services.AddAuthentication().AddCookie(options =>
+            {
+	            options.Cookie.HttpOnly = true;
+	            options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+	            options.Cookie.SameSite = SameSiteMode.Lax;
+            });
 
 			services.AddSwaggerGen(c =>
 			{
@@ -113,6 +122,7 @@ namespace lokiloggerreporter {
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
 		{
 			app.UseUrlObtainer();
+			app.UseCookiePolicy();
 			app.UseAuthentication();
 			app.UseCors(builder => builder
 				.AllowAnyOrigin()
@@ -145,7 +155,6 @@ namespace lokiloggerreporter {
 			{
 				x.MapHub<AnalyzeHub>("/websocket");
 			});
-			app.UseCookiePolicy();
 			app.UseMvc(routes =>
 			{
 				routes.MapRoute(
