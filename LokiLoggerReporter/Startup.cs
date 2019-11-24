@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using lokiloggerreporter.Config;
 using lokiloggerreporter.Extensions;
 using lokiloggerreporter.Hubs;
@@ -7,6 +8,7 @@ using lokiloggerreporter.Models;
 using lokiloggerreporter.Services;
 using lokiloggerreporter.Services.Implementation;
 using lokiloggerreporter.ViewModel.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
@@ -92,12 +95,25 @@ namespace lokiloggerreporter {
                 options.MinimumSameSitePolicy = SameSiteMode.Lax;
             });
 			
-            services.AddAuthentication().AddCookie(options =>
-            {
-	            options.Cookie.HttpOnly = true;
-	            options.Cookie.SecurePolicy = CookieSecurePolicy.None;
-	            options.Cookie.SameSite = SameSiteMode.Lax;
-            });
+            services.AddAuthentication(options =>
+	            {
+		            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+		            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+		            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+	            })
+	            .AddJwtBearer(options =>
+	            {
+		            options.SaveToken = true;
+		            options.RequireHttpsMetadata = false;
+		            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+		            {
+			            ValidateIssuer = true,
+			            ValidateAudience = true,
+			            ValidAudience = UserService.ValidAudience,
+			            ValidIssuer = UserService.ValidIssuer,
+			            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(UserService.SecureKey))
+		            };
+	            });
 
 			services.AddSwaggerGen(c =>
 			{

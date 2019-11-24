@@ -1,18 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using LokiLogger.WebExtension.ViewModel;
 using lokiloggerreporter.Models;
 using lokiloggerreporter.ViewModel;
 using lokiloggerreporter.ViewModel.User;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace lokiloggerreporter.Services.Implementation
 {
     public class UserService
     {
         public const string AdminRole = "Admin";
+        public const string ValidAudience = "http://localhost:5000";
+        public const string ValidIssuer = "http://localhost:5000";
+        public const string SecureKey = "sdfsdffdssasdaasdasd";
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 		
@@ -21,16 +28,38 @@ namespace lokiloggerreporter.Services.Implementation
             _signInManager = signInManager;
             _userManager = userManager;
         }
-        public async Task<OperationResult<bool>> Login(LoginModel model)
+        public async Task<OperationResult<LoginResponseModel>> Login(LoginModel model)
         {
             
             if(model == null) throw new ArgumentNullException();
             User user = await _userManager.FindByNameAsync(model.UserName);
-            if (user == null) return OpRes.Fail<bool>("User", "User not found");
-            var result = await _signInManager.PasswordSignInAsync(user, model.Password, true, false);
-            if (result.Succeeded) return OpRes.Success(true);
-            if(result.IsLockedOut) return OperationResult.Fail<bool>("Login","User is disabled");
-            return OpRes.Fail<bool>("Login", "Login Failed");
+            if (user == null) return OpRes.Fail<LoginResponseModel>("User", "User not found");
+            bool result = await _userManager.CheckPasswordAsync(user, model.Password);
+            if (result)
+            {
+                var authClaims = new[]
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
+
+                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(UserService.SecureKey));
+
+                var token = new JwtSecurityToken(
+                    issuer: UserService.ValidIssuer,
+                    audience: UserService.ValidAudience,
+                    expires: DateTime.Now.AddHours(3),
+                    claims: authClaims,
+                    signingCredentials: new Microsoft.IdentityModel.Tokens.SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                );
+
+                return OperationResult.Success( new LoginResponseModel()
+                {
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    ExpireDate = token.ValidTo
+                });
+            }
+            return OpRes.Fail<LoginResponseModel>("Login", "Login Failed");
         }
 
         public OperationResult<List<UserModel>> GetAllUser()
